@@ -79,6 +79,8 @@ export default function Billfiles() {
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     console.log(doc.id, " => ", doc.data());
+
+
                     data.push(doc.data())
                     setAlldata(data)
                     console.log(alldata)

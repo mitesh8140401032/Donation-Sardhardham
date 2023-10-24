@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faFont, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faFont, faHandHoldingDollar, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import '../User/UserSiderbar.css'
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../Image/mainlogo.png'
@@ -73,7 +73,11 @@ export default function UserSiderbar() {
                                 <span class="sidebar__link-floating">Home</span>
                             </Link>
 
-
+                            <Link to={'/bill'} className="sidebar__link link" >
+                                <FontAwesomeIcon icon={faHandHoldingDollar} />
+                                <span class="sidebar__link-name">Doner_Any</span>
+                                <span class="sidebar__link-floating">Doner_Any</span>
+                            </Link>
                         </div>
                     </div>
                 </nav>

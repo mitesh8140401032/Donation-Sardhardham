@@ -1,17 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
+
+
 import { useFormik } from 'formik';
 import { format } from 'date-fns';
 import Firebase from './Firebase';
 import * as Yup from 'yup';
+
 export default function Dashboard() {
     const [alldata, setAlldata] = useState([])
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [showBill, setShowBill] = useState(false);
+    const pdfExportComponent = useRef(null);
+
     let data = []
     useEffect(() => {
         getData()
     }, [])
+
+
+
 
     // get Data 
     const getData = () => {
@@ -59,14 +68,15 @@ export default function Dashboard() {
             values.BIllDT = formattedDate
 
             console.log(values)
-            let db = Firebase.firestore()
-            db.collection("Doner").add(values)
-                .then(() => {
-                    console.log("Document successfully written!");
-                })
-                .catch((error) => {
-                    console.error("Error writing document: ", error);
-                });
+            // let db = Firebase.firestore()
+            // db.collection("Doner").add(values)
+            //     .then(() => {
+            //         console.log("Document successfully written!");
+            //     })
+            //     .catch((error) => {
+            //         console.error("Error writing document: ", error);
+            //     });
+            showBill(true)
             formik.resetForm()
         },
     });
@@ -97,7 +107,6 @@ export default function Dashboard() {
 
                     <div className="container   pt-5">
                         <div className="row pt-5 ">
-
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="row col-lg-12">
                                     <div className="col-lg-6">
@@ -194,11 +203,13 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             </form>
+
+
                         </div>
                     </div>
-                </div>
+                </div >
 
-            </main>
-        </div>
+            </main >
+        </div >
     )
 }
