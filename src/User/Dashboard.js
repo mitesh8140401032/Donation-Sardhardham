@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
 import { useFormik } from 'formik';
 import { format } from 'date-fns';
-
+import Firebase from './Firebase';
 import * as Yup from 'yup';
 export default function Dashboard() {
     const [alldata, setAlldata] = useState([])
@@ -10,26 +10,39 @@ export default function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     let data = []
     useEffect(() => {
-        if (localStorage.getItem("Alldata")) {
-            data = JSON.parse(localStorage.getItem("Alldata"))
-            console.log(data)
-            setAlldata(data)
-        }
+        getData()
     }, [])
 
+    // get Data 
+    const getData = () => {
+        let db = Firebase.firestore()
+        let data = []
+        db.collection("Doner")
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+                    data.push(doc.data())
+                    setAlldata(data)
+                });
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+    }
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('નામ જરૂરી છે'),
         referencename: Yup.string(),
         village: Yup.string().required('ગામ જરૂરી છે'),
         taluk: Yup.string(),
         district: Yup.string(),
-        moblie: Yup.string()
-            .required("મોબાઈ જરૂરી")
-            .matches(/^[0-9]{10}$/, 'નંબર અધૂરું છે')
-            .required('ફોન નંબર બાકી છે'),
+        // moblie: Yup.string()
+        //     .required("મોબાઈ જરૂરી")
+        //     .matches(/^[0-9]{10}$/, 'નંબર અધૂરું છે')
+        //     .required('ફોન નંબર બાકી છે'),
     });
     const currentDate = new Date();
-    const formattedDate = format(currentDate, 'dd-MM-yyyy (HH:mm:ss)');
+    const formattedDate = format(currentDate, 'dd-MM-yyyy (hh:mm:ss a)');
 
     const formik = useFormik({
         initialValues: {
@@ -44,17 +57,38 @@ export default function Dashboard() {
         onSubmit: (values) => {
             values.id = Date.now()
             values.BIllDT = formattedDate
-            console.log(values);
-            alldata.push(values)
-            localStorage.setItem("Alldata", JSON.stringify(alldata))
 
+            console.log(values)
+            let db = Firebase.firestore()
+            db.collection("Doner").add(values)
+                .then(() => {
+                    console.log("Document successfully written!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
             formik.resetForm()
         },
     });
-    const autosetMoblienumber = (e) => {
-        let findDoner = alldata.findIndex((i) => i.moblie === e)
-        console.log(find)
+
+    const handleMobileChange = (e) => {
+        if (alldata.length > 0) {
+            let autoset = alldata.findIndex((item) => item.moblie === e.target.value);
+            if (autoset !== -1) {
+                formik.setFieldValue('name', alldata[autoset].name);
+                formik.setFieldValue('referencename', alldata[autoset].referencename);
+                formik.setFieldValue('village', alldata[autoset].village);
+                formik.setFieldValue('taluk', alldata[autoset].taluk);
+                formik.setFieldValue('district', alldata[autoset].district);
+                formik.setFieldValue('moblie', alldata[autoset].moblie);
+            } else {
+                console.log('Mobile number not found in data');
+            }
+        } else {
+            console.log('Data is still loading...');
+        }
     }
+
     return (
         <div>
             <UserSiderbar />
@@ -80,9 +114,9 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="col-lg-6">
-                                        <label htmlFor="name">હસ્ત નામ:-</label>
+                                        <label htmlFor="referencename">હસ્ત નામ:-</label>
                                         <input type="text"
-                                            id='name'
+                                            id='referencename'
                                             name='referencename'
                                             className='form-control'
                                             value={formik.values.referencename}
@@ -98,9 +132,9 @@ export default function Dashboard() {
                                 <div className=" row col-lg-12">
 
                                     <div className="col-lg-4">
-                                        <label htmlFor="name">ગામ:-</label>
+                                        <label htmlFor="village">ગામ:-</label>
                                         <input type="text"
-                                            id='name'
+                                            id='village'
                                             name='village'
                                             className='form-control'
                                             value={formik.values.village}
@@ -111,9 +145,9 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="name">તાલુકો:-</label>
+                                        <label htmlFor="taluk">તાલુકો:-</label>
                                         <input type="text"
-                                            id='name'
+                                            id='taluk'
                                             name='taluk'
                                             className='form-control'
                                             value={formik.values.taluk}
@@ -124,9 +158,9 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="name">જીલ્લો:-</label>
+                                        <label htmlFor="district">જીલ્લો:-</label>
                                         <input type="text"
-                                            id='name'
+                                            id='district'
                                             name='district'
                                             className='form-control'
                                             value={formik.values.district}
@@ -140,10 +174,13 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="col-lg-4">
-                                    <label htmlFor="name">મોબાઈલ નંબર* :-</label>
-                                    <input type="text" id='name' name='moblie' className='form-control'
+                                    <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                    <input type="text" id='moblie' name='moblie' className='form-control'
                                         value={formik.values.moblie}
-                                        onChange={(e) => autosetMoblienumber(e.target.value)}
+                                        onChange={(e) => {
+                                            formik.handleChange(e); // This handles changing the moblie field in formik
+                                            handleMobileChange(e); // This triggers your custom logic
+                                        }}
                                         onBlur={formik.handleBlur}
                                     /><br />
                                     {formik.touched.moblie && formik.errors.moblie && (

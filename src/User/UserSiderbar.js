@@ -62,7 +62,7 @@ export default function UserSiderbar() {
 
                 <nav className="sidebar__container text-center">
                     <div class="sidebar__logo" >
-                        <img src={logo} alt="!.." width={150} style={{ marginLeft: '58px' }} />
+
                     </div>
                     <div className="sidebar__content">
                         <div className="sidebar__list">
