@@ -18,8 +18,8 @@ export default function UserSiderbar() {
         setSidebarOpen(prevSidebarOpen => !prevSidebarOpen);
     };
     const linkColor = (link) => {
-        linkRefs.current.forEach(l => l.classList.remove('active-link'));
-        link.classList.add('active-link');
+        linkRefs.current.forEach(l => l.classNameList.remove('active-link'));
+        link.classNameList.add('active-link');
     };
 
     const handlelogout = () => {
@@ -61,7 +61,7 @@ export default function UserSiderbar() {
             <div className={`sidebar ${sidebarOpen ? 'show-sidebar' : ''}`} id="sidebar" ref={sidebarRef}>
 
                 <nav className="sidebar__container text-center">
-                    <div class="sidebar__logo" >
+                    <div className="sidebar__logo" >
 
                     </div>
                     <div className="sidebar__content">
@@ -69,14 +69,24 @@ export default function UserSiderbar() {
 
                             <Link to={'/'} className="sidebar__link link" >
                                 <FontAwesomeIcon className='ri-home-5-line' icon={faHouse} />
-                                <span class="sidebar__link-name">Home</span>
-                                <span class="sidebar__link-floating">Home</span>
+                                <span className="sidebar__link-name">Home</span>
+                                <span className="sidebar__link-floating">Home</span>
                             </Link>
 
+                            <Link to={'/income'} className="sidebar__link link" >
+                                <FontAwesomeIcon icon={faHandHoldingDollar} />
+                                <span className="sidebar__link-name">Income</span>
+                                <span className="sidebar__link-floating">Income</span>
+                            </Link>
+                            <Link to={'/expenss'} className="sidebar__link link" >
+                                <FontAwesomeIcon icon={faHandHoldingDollar} />
+                                <span className="sidebar__link-name">Expenss</span>
+                                <span className="sidebar__link-floating">Expenss</span>
+                            </Link>
                             <Link to={'/bill'} className="sidebar__link link" >
                                 <FontAwesomeIcon icon={faHandHoldingDollar} />
-                                <span class="sidebar__link-name">Doner_Any</span>
-                                <span class="sidebar__link-floating">Doner_Any</span>
+                                <span className="sidebar__link-name">Doner_Any</span>
+                                <span className="sidebar__link-floating">Doner_Any</span>
                             </Link>
                         </div>
                     </div>

@@ -11,8 +11,8 @@ export default function Dashboard() {
     const [alldata, setAlldata] = useState([])
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [showBill, setShowBill] = useState(false);
-    const pdfExportComponent = useRef(null);
+
+
 
     let data = []
     useEffect(() => {
@@ -45,10 +45,10 @@ export default function Dashboard() {
         village: Yup.string().required('ગામ જરૂરી છે'),
         taluk: Yup.string(),
         district: Yup.string(),
-        // moblie: Yup.string()
-        //     .required("મોબાઈ જરૂરી")
-        //     .matches(/^[0-9]{10}$/, 'નંબર અધૂરું છે')
-        //     .required('ફોન નંબર બાકી છે'),
+        moblie: Yup.string()
+
+            .matches(/^[0-9]{10}$/, 'નંબર અધૂરો છે')
+            .required('ફોન નંબર બાકી છે'),
     });
     const currentDate = new Date();
     const formattedDate = format(currentDate, 'dd-MM-yyyy (hh:mm:ss a)');
@@ -61,23 +61,25 @@ export default function Dashboard() {
             taluk: '',
             district: '',
             moblie: '',
+            price: ''
+
         },
         validationSchema,
         onSubmit: (values) => {
             values.id = Date.now()
-            values.BIllDT = formattedDate
+            values.BIllDT = Date.now()
 
             console.log(values)
-            // let db = Firebase.firestore()
-            // db.collection("Doner").add(values)
-            //     .then(() => {
-            //         console.log("Document successfully written!");
-            //     })
-            //     .catch((error) => {
-            //         console.error("Error writing document: ", error);
-            //     });
-            showBill(true)
-            formik.resetForm()
+            let db = Firebase.firestore()
+            db.collection("Doner").add(values)
+                .then(() => {
+                    console.log("Document successfully written!");
+                    formik.resetForm()
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+
         },
     });
 
@@ -123,7 +125,7 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="col-lg-6">
-                                        <label htmlFor="referencename">હસ્ત નામ:-</label>
+                                        <label htmlFor="referencename">હસ્તક નામ:-</label>
                                         <input type="text"
                                             id='referencename'
                                             name='referencename'
@@ -181,21 +183,35 @@ export default function Dashboard() {
                                     </div>
 
                                 </div>
-
-                                <div className="col-lg-4">
-                                    <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
-                                    <input type="text" id='moblie' name='moblie' className='form-control'
-                                        value={formik.values.moblie}
-                                        onChange={(e) => {
-                                            formik.handleChange(e); // This handles changing the moblie field in formik
-                                            handleMobileChange(e); // This triggers your custom logic
-                                        }}
-                                        onBlur={formik.handleBlur}
-                                    /><br />
-                                    {formik.touched.moblie && formik.errors.moblie && (
-                                        <div className="text-danger">{formik.errors.moblie}</div>
-                                    )}
+                                <div className="row">
+                                    <div className="col-lg-4">
+                                        <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                        <input type="text" id='moblie' name='moblie' className='form-control'
+                                            value={formik.values.moblie}
+                                            onChange={(e) => {
+                                                formik.handleChange(e); // This handles changing the moblie field in formik
+                                                handleMobileChange(e); // This triggers your custom logic
+                                            }}
+                                            onBlur={formik.handleBlur}
+                                        /><br />
+                                        {formik.touched.moblie && formik.errors.moblie && (
+                                            <div className="text-danger">{formik.errors.moblie}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="price">રકમ* :-</label>
+                                        <input type="text" id='price' name='price' className='form-control'
+                                            value={formik.values.price}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                        /><br />
+                                        {formik.touched.price && formik.errors.price && (
+                                            <div className="text-danger">{formik.errors.price}</div>
+                                        )}
+                                    </div>
                                 </div>
+
+
                                 <div className='col-lg-12'>
                                     <div className=' d-flex justify-content-center'>
                                         <button className='btn btn-success'>Submit</button>
