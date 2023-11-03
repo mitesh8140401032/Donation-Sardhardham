@@ -1,0 +1,80 @@
+.login-pages {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login {
+    width: 420px;
+    padding-top: 50px;
+    min-height: 100px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.input-field {
+    width: 100%;
+    height: 45px;
+    border: none;
+    padding: 10px;
+    background-color: #eeeeee;
+    color: gray;
+    outline: none;
+    font-size: 15px;
+    margin-bottom: 20px;
+    transition: .5s;
+    border-radius: 5px;
+}
+
+.text-dcoration {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.heading {
+    color: #3B3663;
+    margin-bottom: 20px;
+}
+
+.heading p {
+    color: #AAA8BB;
+}
+
+.heading i {
+    font-size: 30px;
+    color: #4D61FC;
+}
+
+label {
+    color: #AAA8BB;
+    font-weight: 400;
+}
+
+.buttons {
+    width: 100%;
+    height: 45px;
+    border: none;
+    color: #FFFFFF;
+    background-color: #31285C;
+    border-radius: 5px;
+    font-size: 17px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.buttons:hover {
+    background-color: #31283B;
+}
+
+.rows {
+
+
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+}

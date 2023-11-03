@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faFont, faHandHoldingDollar, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
-import '../User/UserSiderbar.css'
+import './UserSiderbar.css'
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../Image/mainlogo.png'
+import logo from './Image/mainlogo.png'
 
 export default function UserSiderbar() {
     const navigate = useNavigate('')

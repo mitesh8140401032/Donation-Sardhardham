@@ -12,11 +12,15 @@ export default function Dashboard() {
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
+    const [loginId, setLoginId] = useState('')
 
     let data = []
     useEffect(() => {
+        let url = window.location.href
+        let Id = url.substring(url.lastIndexOf('/') + 1)
+        setLoginId(Id)
         getData()
+        makeid()
     }, [])
 
 
@@ -52,7 +56,21 @@ export default function Dashboard() {
     });
     const currentDate = new Date();
     const formattedDate = format(currentDate, 'dd-MM-yyyy (hh:mm:ss a)');
+    let makeid = () => {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < 7) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
+        }
+        return result;
+    }
 
+    // Call the function to generate a random string
+    const randomString = makeid();
+    console.log(randomString);
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -61,24 +79,26 @@ export default function Dashboard() {
             taluk: '',
             district: '',
             moblie: '',
+            id: "",
             price: ''
 
         },
         validationSchema,
         onSubmit: (values) => {
-            values.id = Date.now()
-            values.BIllDT = Date.now()
+            values.id = randomString
 
+            values.owner = loginId
+            values.creatted = Date.now()
             console.log(values)
-            let db = Firebase.firestore()
-            db.collection("Doner").add(values)
-                .then(() => {
-                    console.log("Document successfully written!");
-                    formik.resetForm()
-                })
-                .catch((error) => {
-                    console.error("Error writing document: ", error);
-                });
+            // let db = Firebase.firestore()
+            // db.collection("Doner").add(values)
+            //     .then(() => {
+            //         console.log("Document successfully written!");
+            //         formik.resetForm()
+            //     })
+            //     .catch((error) => {
+            //         console.error("Error writing document: ", error);
+            //     });
 
         },
     });
@@ -107,7 +127,7 @@ export default function Dashboard() {
             <main className={`main containers ${sidebarOpen ? 'main-pd' : ''}`} ref={mainRef}>
                 <div className="main-container">
 
-                    <div className="container   pt-5">
+                    <div className="container   pt-2">
                         <div className="row pt-5 ">
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="row col-lg-12">
@@ -212,7 +232,7 @@ export default function Dashboard() {
                                 </div>
 
 
-                                <div className='col-lg-12'>
+                                <div className=' row'>
                                     <div className=' d-flex justify-content-center'>
                                         <button className='btn btn-success'>Submit</button>
 
