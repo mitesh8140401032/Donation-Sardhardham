@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useFormik } from 'formik';
 import { format } from 'date-fns';
 import Firebase from './Firebase';
 import * as Yup from 'yup';
+
 
 export default function Dashboard() {
     const [alldata, setAlldata] = useState([])
@@ -34,7 +37,7 @@ export default function Dashboard() {
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, " => ", doc.data());
+
                     data.push(doc.data())
                     setAlldata(data)
                 });
@@ -49,6 +52,7 @@ export default function Dashboard() {
         village: Yup.string().required('ગામ જરૂરી છે'),
         taluk: Yup.string(),
         district: Yup.string(),
+        description: Yup.string().required('Please select an option'),
         moblie: Yup.string()
 
             .matches(/^[0-9]{10}$/, 'નંબર અધૂરો છે')
@@ -70,7 +74,7 @@ export default function Dashboard() {
 
     // Call the function to generate a random string
     const randomString = makeid();
-    console.log(randomString);
+
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -80,25 +84,40 @@ export default function Dashboard() {
             district: '',
             moblie: '',
             id: "",
-            price: ''
+            amount: '',
+            modeofpatment: '',
+            description: '',
 
         },
         validationSchema,
         onSubmit: (values) => {
+
             values.id = randomString
 
-            values.owner = loginId
+            values.owner = loginId || localStorage.getItem("lid")
             values.creatted = Date.now()
-            console.log(values)
-            // let db = Firebase.firestore()
-            // db.collection("Doner").add(values)
-            //     .then(() => {
-            //         console.log("Document successfully written!");
-            //         formik.resetForm()
-            //     })
-            //     .catch((error) => {
-            //         console.error("Error writing document: ", error);
-            //     });
+
+            const isAlreadyRegistered = alldata.some((entry) => entry.moblie === values.moblie);
+            if (isAlreadyRegistered) {
+                toast.error('Already Registered !', {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            } else {
+
+                toast.success('Success Registered  !', {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+                let db = Firebase.firestore()
+                db.collection("Doner").add(values)
+                    .then(() => {
+                        console.log("Document successfully written!");
+                        formik.resetForm()
+                    })
+                    .catch((error) => {
+                        console.error("Error writing document: ", error);
+                    });
+            }
+
 
         },
     });
@@ -113,6 +132,9 @@ export default function Dashboard() {
                 formik.setFieldValue('taluk', alldata[autoset].taluk);
                 formik.setFieldValue('district', alldata[autoset].district);
                 formik.setFieldValue('moblie', alldata[autoset].moblie);
+                formik.setFieldValue('modeofpatment', alldata[autoset].modeofpatment);
+                formik.setFieldValue('description', alldata[autoset].description);
+                formik.setFieldValue('amount', alldata[autoset].amount);
             } else {
                 console.log('Mobile number not found in data');
             }
@@ -157,11 +179,6 @@ export default function Dashboard() {
                                             <div className="text-danger">{formik.errors.referencename}</div>
                                         )}
                                     </div>
-
-                                </div>
-
-                                <div className=" row col-lg-12">
-
                                     <div className="col-lg-4">
                                         <label htmlFor="village">ગામ:-</label>
                                         <input type="text"
@@ -201,9 +218,6 @@ export default function Dashboard() {
                                             <div className="text-danger">{formik.errors.district}</div>
                                         )}
                                     </div>
-
-                                </div>
-                                <div className="row">
                                     <div className="col-lg-4">
                                         <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
                                         <input type="text" id='moblie' name='moblie' className='form-control'
@@ -219,22 +233,79 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="price">રકમ* :-</label>
-                                        <input type="text" id='price' name='price' className='form-control'
-                                            value={formik.values.price}
+                                        <label htmlFor="amount">દાન-રકમ* :-</label>
+                                        <input type="text" id='amount' name='amount' className='form-control'
+                                            value={formik.values.amount}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                         /><br />
-                                        {formik.touched.price && formik.errors.price && (
-                                            <div className="text-danger">{formik.errors.price}</div>
+                                        {formik.touched.amount && formik.errors.amount && (
+                                            <div className="text-danger">{formik.errors.amount}</div>
                                         )}
                                     </div>
+
+                                    <div className="col-lg-4">
+                                        <label htmlFor="amounts">ચુકવણી પદ્ધતિ* :-</label>
+                                        <div className='row d-flex align-items-center'>
+                                            <div className="form-check">
+                                                <label htmlFor="fullDonation">
+                                                    <input
+                                                        type="radio"
+                                                        id="fullDonation"
+                                                        name="modeofpatment" // Use a unique name for this group
+                                                        value="સંપૂર્ણ  દાન"
+                                                        checked={formik.values.modeofpatment === "સંપૂર્ણ  દાન"} // Match the value attribute
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                    /> સંપૂર્ણ  દાન
+                                                </label>
+                                                <label htmlFor="monthlyDonation">
+                                                    <input
+                                                        type="radio"
+                                                        id="monthlyDonation"
+                                                        name="modeofpatment" // Use a unique name for this group
+                                                        value="હપ્તે દાન"
+                                                        checked={formik.values.modeofpatment === "હપ્તે દાન"} // Match the value attribute
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                    />   હપ્તે દાન
+                                                </label>
+                                            </div>
+
+                                            {formik.touched.modeofpatment && formik.errors.modeofpatment && (
+                                                <div className="text-danger">{formik.errors.modeofpatment}</div>
+                                            )}
+                                        </div>
+
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="description">વિગત:-</label>
+                                        <select
+                                            name="description"
+                                            id="description"
+                                            className='form-select'
+                                            value={formik.values.description}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                        >
+                                            <option value="">વિગત-દાન</option>
+                                            <option value="બાંધકામ">બાંધકામ</option>
+                                            <option value="ભૂમિદાન">ભૂમિદાન</option>
+                                            <option value="બીજમંત્ર-અનુષ્ઠાન">બીજમંત્ર-અનુષ્ઠાન</option>
+                                            <option value="સંતો રસોઈ">સંતો રસોઈ</option>
+                                            <option value="ઠાકોરજી થાળ">ઠાકોરજી થાળ</option>
+                                            <option value="અન્ય દાન">અન્ય દાન</option>
+                                        </select>
+
+                                        {formik.touched.description && formik.errors.description ? (
+                                            <div className="text-danger">{formik.errors.description}</div>
+                                        ) : null}
+
+                                    </div>
                                 </div>
-
-
-                                <div className=' row'>
+                                <div className=' row' >
                                     <div className=' d-flex justify-content-center'>
-                                        <button className='btn btn-success'>Submit</button>
+                                        <button className='btn btn-success mt-3'>Submit</button>
 
                                     </div>
                                 </div>
@@ -243,6 +314,7 @@ export default function Dashboard() {
 
                         </div>
                     </div>
+                    <ToastContainer style={{ zIndex: 99999 }} />
                 </div >
 
             </main >

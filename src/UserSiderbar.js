@@ -13,6 +13,7 @@ export default function UserSiderbar() {
     const mainRef = useRef(null);
     const linkRefs = useRef([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [loginId, setLoginId] = useState('')
 
     const toggleSidebar = () => {
         setSidebarOpen(prevSidebarOpen => !prevSidebarOpen);
@@ -23,12 +24,16 @@ export default function UserSiderbar() {
     };
 
     const handlelogout = () => {
-        localStorage.removeItem('Login')
+        localStorage.removeItem('lid')
         navigate('/login')
     }
 
 
     useEffect(() => {
+
+        let url = window.location.href
+        let Id = url.substring(url.lastIndexOf('/') + 1)
+        setLoginId(Id)
         const handleLinkClick = (event) => {
             linkColor(event.target);
         };
@@ -67,27 +72,24 @@ export default function UserSiderbar() {
                     <div className="sidebar__content">
                         <div className="sidebar__list">
 
-                            <Link to={'/'} className="sidebar__link link" >
+                            <Link to={'/home/' + loginId} className="sidebar__link link" >
                                 <FontAwesomeIcon className='ri-home-5-line' icon={faHouse} />
                                 <span className="sidebar__link-name">Home</span>
                                 <span className="sidebar__link-floating">Home</span>
                             </Link>
 
-                            <Link to={'/income'} className="sidebar__link link" >
+                            <Link to={'/income/' + loginId} className="sidebar__link link" >
                                 <FontAwesomeIcon icon={faHandHoldingDollar} />
                                 <span className="sidebar__link-name">Income</span>
                                 <span className="sidebar__link-floating">Income</span>
                             </Link>
-                            <Link to={'/expenss'} className="sidebar__link link" >
-                                <FontAwesomeIcon icon={faHandHoldingDollar} />
-                                <span className="sidebar__link-name">Expenss</span>
-                                <span className="sidebar__link-floating">Expenss</span>
-                            </Link>
-                            <Link to={'/bill'} className="sidebar__link link" >
-                                <FontAwesomeIcon icon={faHandHoldingDollar} />
-                                <span className="sidebar__link-name">Doner_Any</span>
-                                <span className="sidebar__link-floating">Doner_Any</span>
-                            </Link>
+
+                            <span onClick={handlelogout} className='sidebar__link link'>
+                                <FontAwesomeIcon icon={faRightFromBracket} />
+
+                                <span className="sidebar__link-name">Logout</span>
+                                <span className="sidebar__link-floating">Logout</span>
+                            </span>
                         </div>
                     </div>
                 </nav>

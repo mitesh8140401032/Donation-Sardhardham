@@ -42,7 +42,7 @@ export default function SingIn() {
 
             login.forEach((i) => {
                 if (i.username == values.username && i.password == values.password) {
-                    naivgate('/' + values.username)
+                    naivgate('/home/' + values.username)
                     localStorage.setItem("lid", values.username)
                 }
             })
