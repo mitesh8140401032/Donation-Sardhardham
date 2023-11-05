@@ -3,10 +3,12 @@ import UserSiderbar from './UserSiderbar';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Firebase from './Firebase';
+import { useNavigate } from 'react-router-dom';
 
-export default function Expenss() {
+export default function Expenses() {
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const Naivgate = useNavigate()
     const [alldata, setAlldata] = useState([])
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('નામ જરૂરી છે'),
@@ -20,6 +22,7 @@ export default function Expenss() {
     });
 
     useEffect(() => {
+        console.log("zcxxfvcx")
         getData()
     }, [])
     let makeid = () => {
@@ -37,14 +40,16 @@ export default function Expenss() {
     const getData = () => {
         let db = Firebase.firestore()
         let data = []
-        db.collection("Expenss")
+        db.collection("Expenses")
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
 
                     data.push(doc.data())
                     setAlldata(data)
+                    console.log(alldata)
                 });
+
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
@@ -56,18 +61,23 @@ export default function Expenss() {
             referencename: '',
             moblie: '',
             description: '',
-            modeofpaytment: ''
+            modeofpaytment: '',
+            amount: ""
         },
         validationSchema,
         onSubmit: (values) => {
             values.id = randomString
+            values.owner = localStorage.getItem("lid")
+            values.type = "expense"
             values.creatted = Date.now()
             console.log(values);
 
             let db = Firebase.firestore()
-            db.collection("Expenss").add(values)
+            db.collection("Expenses").add(values)
                 .then(() => {
                     console.log("Document successfully written!");
+                    Naivgate('/dashboard/' + localStorage.getItem("lid"))
+
                     formik.resetForm()
                 })
                 .catch((error) => {
@@ -77,17 +87,21 @@ export default function Expenss() {
         }
     });
     const handleMobileChange = (e) => {
-
-
+        const inputMobile = e.target.value;
 
         if (alldata.length > 0) {
-            const autoset = alldata.findIndex((item) => item.moblie === e.target.value);
-            if (autoset !== -1) {
-                formik.setFieldValue('name', alldata[autoset].name);
-                formik.setFieldValue('referencename', alldata[autoset].referencename);
-                formik.setFieldValue('moblie', alldata[autoset].moblie);
-                formik.setFieldValue('modeofpayment', alldata[autoset].modeofpayment);
-                formik.setFieldValue('description', alldata[autoset].description);
+            const matchingData = alldata.find((item) => item.moblie === inputMobile);
+
+            if (matchingData) {
+                formik.setValues({
+                    ...formik.values,
+                    name: matchingData.name,
+                    referencename: matchingData.referencename,
+                    moblie: matchingData.moblie,
+                    modeofpaytment: matchingData.modeofpaytment,
+                    description: matchingData.description,
+                    amount: matchingData.amount
+                });
             } else {
                 console.log('Mobile number not found in data');
             }
@@ -95,6 +109,7 @@ export default function Expenss() {
             console.log('Data is still loading...');
         }
     };
+
 
     return (
         <div>
@@ -106,7 +121,7 @@ export default function Expenss() {
                         <form onSubmit={formik.handleSubmit}>
                             <div className="row">
 
-                                <div className="col-lg-6">
+                                <div className="col-lg-4">
 
                                     <label htmlFor="name">Name:</label>
                                     <input type="text" className='form-control' id="name" name="name" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.name} />
@@ -114,7 +129,7 @@ export default function Expenss() {
                                         <div className="text-danger">{formik.errors.name}</div>
                                     )}
                                 </div>
-                                <div className="col-lg-6">
+                                <div className="col-lg-4">
                                     <label htmlFor="referencename">Reference Name:</label>
                                     <input type="text" id='referencename' name='referencename' className='form-control'
                                         value={formik.values.referencename}
@@ -124,12 +139,15 @@ export default function Expenss() {
                                     />
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="moblie">Mobile Number:</label>
-                                    <input type="number" className='form-control' id="moblie" name="moblie" onChange={(e) => {
-                                        formik.handleChange(e);
-                                        handleMobileChange(e);
-                                    }}
-                                        onBlur={formik.handleBlur} value={formik.values.moblie} />
+                                    <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                    <input type="text" id='moblie' name='moblie' className='form-control'
+                                        value={formik.values.moblie}
+                                        onChange={(e) => {
+                                            formik.handleChange(e); // This handles changing the moblie field in formik
+                                            handleMobileChange(e); // This triggers your custom logic
+                                        }}
+                                        onBlur={formik.handleBlur}
+                                    /><br />
                                     {formik.touched.moblie && formik.errors.moblie && (
                                         <div className="text-danger">{formik.errors.moblie}</div>
                                     )}
@@ -137,7 +155,7 @@ export default function Expenss() {
                                 <div className="col-lg-4">
                                     <label htmlFor="description">વિગત:</label>
                                     <select as="select" id="description" className='form-select' name="description" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.description}>
-
+                                        <option value="">ખર્ચ</option>
                                         <option value="પગાર">પગાર</option>
                                         <option value="ભાડું">ભાડું</option>
                                         <option value="લાઇટ">લાઇટ-બિલ</option>
@@ -182,6 +200,17 @@ export default function Expenss() {
                                             <div className="text-danger">{formik.errors.modeofpaytment}</div>
                                         )}
                                     </div>
+                                </div>
+                                <div className="col-lg-4">
+                                    <label htmlFor="amount">Amount* :-</label>
+                                    <input type="text" id='amount' name='amount' className='form-control'
+                                        value={formik.values.amount}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                    /><br />
+                                    {formik.touched.amount && formik.errors.amount && (
+                                        <div className="text-danger">{formik.errors.amount}</div>
+                                    )}
                                 </div>
 
                                 <div className=' row' >

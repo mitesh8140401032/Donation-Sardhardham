@@ -68,7 +68,7 @@ export default function UserSiderbar() {
 
                     <div className="sidebar__content">
                         <div className="sidebar__list">
-                            <Link to={'/home/' + loginId} className="sidebar__link link" >
+                            <Link to={'/dashboard/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
                                 <span className="sidebar__link-name">Dashboard </span>
                                 <span className="sidebar__link-floating">Dashboard </span>
@@ -79,7 +79,7 @@ export default function UserSiderbar() {
                                 <span className="sidebar__link-name">Income</span>
 
                             </Link>
-                            <Link to={'/expenss/' + loginId} className="sidebar__link link" >
+                            <Link to={'/expenses/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
 
                                 <span className="sidebar__link-name">Expenses </span>

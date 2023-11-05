@@ -196,7 +196,7 @@ export default function DonerParty() {
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
-                                        title={"Doner List"}
+                                        title={"Income"}
                                         data={a}
                                         columns={columns}
                                         options={options}
@@ -208,7 +208,7 @@ export default function DonerParty() {
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
-                                        title={"Doner List"}
+                                        title={"Income"}
                                         data={b}
                                         columns={columns}
                                         options={options}
@@ -220,7 +220,7 @@ export default function DonerParty() {
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
-                                        title={"Doner List"}
+                                        title={"Income"}
                                         data={c}
                                         columns={columns}
                                         options={options}

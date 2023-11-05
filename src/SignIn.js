@@ -42,7 +42,7 @@ export default function SingIn() {
 
             login.forEach((i) => {
                 if (i.username == values.username && i.password == values.password) {
-                    naivgate('/home/' + values.username)
+                    naivgate('/dashboard/' + values.username)
                     localStorage.setItem("lid", values.username)
                 }
             })
@@ -53,14 +53,14 @@ export default function SingIn() {
     return (
         <div className='login-pages '>
 
-            <div class="login">
+            <div className="login">
 
-                <div class="heading">
+                <div className="heading">
                     <h2>Welcome!</h2>
                     <p>Sign In to your account</p>
                 </div>
                 <form onSubmit={formik.handleSubmit}>
-                    <div class="input-group">
+                    <div className="input-group">
                         <input
                             type="text"
                             id="username"
@@ -75,7 +75,7 @@ export default function SingIn() {
                     {formik.touched.username && formik.errors.username && (
                         <div className="error">{formik.errors.username}</div>
                     )}
-                    <div class="input-group">
+                    <div className="input-group">
                         <input
                             type="password"
                             id="password"
@@ -90,12 +90,12 @@ export default function SingIn() {
                     {formik.touched.password && formik.errors.password && (
                         <div className="error">{formik.errors.password}</div>
                     )}
-                    <div class="d-flex justify-content-center  rows ">
+                    <div className="d-flex justify-content-center  rows ">
                         <Link to={'/login'} className='text-dcoration' >Forgot password?</Link>
                     </div>
 
-                    <div class="input-group">
-                        <button className='buttons'>Login <i class="fa-solid fa-arrow-right"></i></button>
+                    <div className="input-group">
+                        <button className='buttons'>Login <i className="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </form>
             </div>

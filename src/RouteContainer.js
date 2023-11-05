@@ -5,16 +5,17 @@ import SingIn from './SignIn';
 import ProtectedRoute from './ProtectedRoute';
 import Income from './Income';
 import DonerParty from './DonerParty';
-import Expenss from './Expenss';
+
+import Expenses from './Expenses';
 export default function RouteContainer() {
     return (
         <BrowserRouter>
             <Routes>
 
-                <Route path='/home/:id' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
                 <Route path='/dashboard/:id' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path='/income/:id' element={<ProtectedRoute><Income /></ProtectedRoute>} />
-                <Route path='/expenss/:id' element={<ProtectedRoute><Expenss /></ProtectedRoute>} />
+                <Route path='/expenses/:id' element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
                 <Route path='/doner-party/:id' element={<ProtectedRoute><DonerParty /></ProtectedRoute>} />
 
 

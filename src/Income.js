@@ -8,15 +8,15 @@ import { useFormik } from 'formik';
 import { format } from 'date-fns';
 import Firebase from './Firebase';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 export default function Income() {
     const [alldata, setAlldata] = useState([])
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const Navigate = useNavigate()
     const [loginId, setLoginId] = useState('')
 
-    let data = []
     useEffect(() => {
         let url = window.location.href
         let Id = url.substring(url.lastIndexOf('/') + 1)
@@ -106,10 +106,12 @@ export default function Income() {
                 toast.success('Success Registered  !', {
                     position: toast.POSITION.TOP_RIGHT
                 });
+                Navigate('/dashboard/' + localStorage.getItem("lid"))
                 let db = Firebase.firestore()
                 db.collection("Doner").add(values)
                     .then(() => {
                         console.log("Document successfully written!");
+
                         formik.resetForm()
                     })
                     .catch((error) => {
