@@ -3,8 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faFont, faHandHoldingDollar, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import './UserSiderbar.css'
 import { Link, useNavigate } from 'react-router-dom';
-import logo from './Image/mainlogo.png'
-
+import logo from './Mitesh.png'
 export default function UserSiderbar() {
     const navigate = useNavigate('')
 
@@ -25,7 +24,7 @@ export default function UserSiderbar() {
 
     const handlelogout = () => {
         localStorage.removeItem('lid')
-        navigate('/login')
+        navigate('/')
     }
 
 
@@ -65,30 +64,42 @@ export default function UserSiderbar() {
 
             <div className={`sidebar ${sidebarOpen ? 'show-sidebar' : ''}`} id="sidebar" ref={sidebarRef}>
 
-                <nav className="sidebar__container text-center">
-                    <div className="sidebar__logo" >
+                <nav className="">
 
-                    </div>
                     <div className="sidebar__content">
                         <div className="sidebar__list">
-
                             <Link to={'/home/' + loginId} className="sidebar__link link" >
-                                <FontAwesomeIcon className='ri-home-5-line' icon={faHouse} />
-                                <span className="sidebar__link-name">Home</span>
-                                <span className="sidebar__link-floating">Home</span>
+                                <img src={logo} alt="!.." width={20} height={20} />
+                                <span className="sidebar__link-name">Dashboard </span>
+                                <span className="sidebar__link-floating">Dashboard </span>
+                            </Link>
+                            <Link to={'/income/' + loginId} className="sidebar__link link" >
+                                <img src={logo} alt="!.." width={20} height={20} />
+
+                                <span className="sidebar__link-name">Income</span>
+
+                            </Link>
+                            <Link to={'/expenss/' + loginId} className="sidebar__link link" >
+                                <img src={logo} alt="!.." width={20} height={20} />
+
+                                <span className="sidebar__link-name">Expenses </span>
+
+                            </Link><Link to={'/doner-party/' + loginId} className="sidebar__link link" >
+                                <img src={logo} alt="!.." width={20} height={20} />
+
+                                <span className="sidebar__link-name">Doner_Party </span>
+
                             </Link>
 
-                            <Link to={'/income/' + loginId} className="sidebar__link link" >
-                                <FontAwesomeIcon icon={faHandHoldingDollar} />
-                                <span className="sidebar__link-name">Income</span>
-                                <span className="sidebar__link-floating">Income</span>
-                            </Link>
+
+
 
                             <span onClick={handlelogout} className='sidebar__link link'>
-                                <FontAwesomeIcon icon={faRightFromBracket} />
+                                <img src={logo} alt="!.." width={20} height={20} />
+
 
                                 <span className="sidebar__link-name">Logout</span>
-                                <span className="sidebar__link-floating">Logout</span>
+
                             </span>
                         </div>
                     </div>

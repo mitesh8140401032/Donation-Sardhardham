@@ -1,345 +1,323 @@
 import React, { useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
-import MUIDataTable from "mui-datatables";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import createCache from '@emotion/cache';
-import { ThemeProvider, createTheme } from '@material-ui/core/styles';
-import { CacheProvider } from '@emotion/react';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { useFormik } from 'formik';
+import { format } from 'date-fns';
 import Firebase from './Firebase';
-import moment from 'moment';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import Nav from 'react-bootstrap/Nav';
-const muiCache = createCache({
-    key: 'mui-datatables',
-    prepend: true
-})
+import * as Yup from 'yup';
 
 export default function Income() {
-    const [key, setKey] = useState('home');
+    const [alldata, setAlldata] = useState([])
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [alldata, setAlldata] = useState([])
-    const [totalAmount, setTotalAmount] = useState(0);
-    const [show, setShow] = useState(false);
-    const [selectedData, setSelectedData] = useState(null);
-    const [showSecondModal, setShowSecondModal] = useState(false);
-    const handleClose = () => {
-        setShow(false);
-        setSelectedData(null);
-    };
-    const handleShowSecondModal = () => {
-        setShowSecondModal(true);
-    };
 
-    const handleCloseSecondModal = () => {
-        setShowSecondModal(false);
-    };
+    const [loginId, setLoginId] = useState('')
 
+    let data = []
     useEffect(() => {
-        getData();
+        let url = window.location.href
+        let Id = url.substring(url.lastIndexOf('/') + 1)
+        setLoginId(Id)
+        getData()
+        makeid()
+    }, [])
 
-    }, []);
 
-    useEffect(() => {
-        // Calculate the total amount whenever the 'alldata' array changes
-        calculateTotalAmount(alldata);
-    }, [alldata]);
-    const formatTimeAgo = (created) => {
-        const currentDate = moment();
-        const createdDate = moment(created);
-        const duration = moment.duration(currentDate.diff(createdDate));
-        const hoursAgo = duration.asHours();
 
-        if (hoursAgo >= 24) {
-            return createdDate.format('YYYY-MM-DD HH:mm:ss');
-        } else {
-            return duration.humanize(true);
-        }
-    };
-    const handleViewClick = (rowData, rowMeta) => {
-        // rowData will contain the data of the clicked row
-        console.log(rowData);
-        setSelectedData(rowData);
-        setShow(true);
-    };
-    const columns = [
-        {
-            name: "name",
-            label: "નામ",
-            options: {
-                filter: true,
-                sort: true,
-            }
-        },
-        {
-            name: "referencename",
-            label: "હસ્ત નામ",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            name: "village",
-            label: "ગામ",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
 
-        {
-            label: "મોબાઈલ નંબર",
-            name: "moblie",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            label: "રકમ",
-            name: "amount",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            label: "વિગત",
-            name: "description",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            label: "મહેતાજી નંબર",
-            name: "owner",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            label: "View",
-            name: "alldata",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta) => {
-
-                    return (
-                        <button className='btn btn-success' onClick={() => handleViewClick(alldata[tableMeta.rowIndex])}>
-                            View
-                        </button>
-                    );
-                },
-            },
-        }
-        // {
-        //     label: "BIllDT",
-        //     name: "BIllDT",
-        //     options: {
-        //         filter: false,
-        //         sort: false,
-        //         customBodyRender: (value) => {
-        //             const currentDate = moment();
-        //             const billDate = moment(value);
-        //             const duration = moment.duration(currentDate.diff(billDate));
-        //             const hoursAgo = duration.asHours();
-
-        //             if (hoursAgo < 24) {
-        //                 // If it's within the last 24 hours, show time ago
-        //                 const formattedDuration = moment.duration(-hoursAgo, 'hours').humanize(true);
-        //                 return <p>{formattedDuration} </p>;
-        //             } else {
-        //                 // If it's older than 24 hours, show the full date
-        //                 const formattedDate = billDate.format('YYYY-MM-DD HH:mm:ss');
-        //                 return <p>{formattedDate}</p>;
-        //             }
-        //         }
-
-        //     }
-        // }
-
-    ];
-    const calculateTotalAmount = (data) => {
-        const total = data.reduce((total, item) => total + parseInt(item.amount || 0), 0);
-        setTotalAmount(total);
-    }
+    // get Data 
     const getData = () => {
         let db = Firebase.firestore()
         let data = []
         db.collection("Doner")
-
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, " => ", doc.data());
-
 
                     data.push(doc.data())
                     setAlldata(data)
-                    console.log(alldata)
                 });
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
     }
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required('નામ જરૂરી છે'),
+        referencename: Yup.string(),
+        village: Yup.string().required('ગામ જરૂરી છે'),
+        taluk: Yup.string(),
+        district: Yup.string(),
+        description: Yup.string().required('Please select an option'),
+        moblie: Yup.string()
 
-    let a = alldata.filter(i => i.description == 'બાંધકામ')
-    let b = alldata.filter(i => i.description == 'ભૂમિદાન')
-    let c = alldata.filter(i => i.description == 'બીજમંત્ર-અનુષ્ઠાન')
-    let d = alldata.filter(i => i.description == 'બાંધકામ')
+            .matches(/^[0-9]{10}$/, 'નંબર અધૂરો છે')
+            .required('ફોન નંબર બાકી છે'),
+    });
+    const currentDate = new Date();
+    const formattedDate = format(currentDate, 'dd-MM-yyyy (hh:mm:ss a)');
+    let makeid = () => {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < 7) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
+        }
+        return result;
+    }
 
-    const options = {
-        filterType: 'checkbox',
-    };
+    // Call the function to generate a random string
+    const randomString = makeid();
+
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            referencename: '',
+            village: '',
+            taluk: '',
+            district: '',
+            moblie: '',
+            id: "",
+            amount: '',
+            modeofpatment: '',
+            description: '',
+
+        },
+        validationSchema,
+        onSubmit: (values) => {
+
+            values.id = randomString
+            values.type = "income"
+            values.owner = loginId || localStorage.getItem("lid")
+            values.creatted = Date.now()
+
+            const isAlreadyRegistered = alldata.some((entry) => entry.moblie === values.moblie);
+            if (isAlreadyRegistered) {
+                toast.error('Already Registered !', {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+            } else {
+
+                toast.success('Success Registered  !', {
+                    position: toast.POSITION.TOP_RIGHT
+                });
+                let db = Firebase.firestore()
+                db.collection("Doner").add(values)
+                    .then(() => {
+                        console.log("Document successfully written!");
+                        formik.resetForm()
+                    })
+                    .catch((error) => {
+                        console.error("Error writing document: ", error);
+                    });
+            }
+
+
+        },
+    });
+
+    const handleMobileChange = (e) => {
+        if (alldata.length > 0) {
+            let autoset = alldata.findIndex((item) => item.moblie === e.target.value);
+            if (autoset !== -1) {
+                formik.setFieldValue('name', alldata[autoset].name);
+                formik.setFieldValue('referencename', alldata[autoset].referencename);
+                formik.setFieldValue('village', alldata[autoset].village);
+                formik.setFieldValue('taluk', alldata[autoset].taluk);
+                formik.setFieldValue('district', alldata[autoset].district);
+                formik.setFieldValue('moblie', alldata[autoset].moblie);
+                formik.setFieldValue('modeofpatment', alldata[autoset].modeofpatment);
+                formik.setFieldValue('description', alldata[autoset].description);
+                formik.setFieldValue('amount', alldata[autoset].amount);
+            } else {
+                console.log('Mobile number not found in data');
+            }
+        } else {
+            console.log('Data is still loading...');
+        }
+    }
+
     return (
         <div>
             <UserSiderbar />
             <main className={`main containers ${sidebarOpen ? 'main-pd' : ''}`} ref={mainRef}>
+                <div className="main-container">
 
-                <div className=' row d-flex justify-content-end pt-5' >
-                    <h3>Total Amount: {totalAmount}</h3> {/* Display the total amount */}
-
-                    <Tabs
-                        id="controlled-tab-example"
-                        activeKey={key}
-                        onSelect={(k) => setKey(k)}
-                        className="mb-3"
-                    >
-                        <Tab eventKey="home" title="બાંધકામ">
-                            <CacheProvider value={muiCache}>
-                                <ThemeProvider theme={createTheme()}>
-                                    <MUIDataTable
-                                        title={"Doner List"}
-                                        data={a}
-                                        columns={columns}
-                                        options={options}
-                                    />
-                                </ThemeProvider>
-                            </CacheProvider>
-                        </Tab>
-                        <Tab eventKey="profile" title="ભૂમિદાન">
-                            <CacheProvider value={muiCache}>
-                                <ThemeProvider theme={createTheme()}>
-                                    <MUIDataTable
-                                        title={"Doner List"}
-                                        data={b}
-                                        columns={columns}
-                                        options={options}
-                                    />
-                                </ThemeProvider>
-                            </CacheProvider>
-                        </Tab>
-                        <Tab eventKey="contact" title=" બીજમંત્ર-અનુષ્ઠાન" >
-                            <CacheProvider value={muiCache}>
-                                <ThemeProvider theme={createTheme()}>
-                                    <MUIDataTable
-                                        title={"Doner List"}
-                                        data={c}
-                                        columns={columns}
-                                        options={options}
-                                    />
-                                </ThemeProvider>
-                            </CacheProvider>
-                        </Tab>
-                    </Tabs>
-
-
-                </div>
-
-
-                <Modal show={show} onHide={handleClose} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>View Data</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {selectedData && (
-                            <div>
-                                <div className="row">
-                                    <div className="col-lg-6"> <h5>નામ: {selectedData.name}</h5>  </div>
-                                    <div className="col-lg-6"> <h5> હસ્તક નામ: {selectedData.referencename}</h5></div>
-                                    <div className="col-lg-6"> <h5>વિગત: {selectedData.description}</h5></div>
-                                    <div className="col-lg-6">  <h5>ચુકવણી પદ્ધતિ: {selectedData.modeofpatment}</h5>
+                    <div className="container   pt-2">
+                        <div className="row pt-5 ">
+                            <form onSubmit={formik.handleSubmit}>
+                                <div className="row col-lg-12">
+                                    <div className="col-lg-6">
+                                        <label htmlFor="name">નામ:-</label>
+                                        <input type="text"
+                                            id='name'
+                                            name='name'
+                                            className='form-control'
+                                            value={formik.values.name}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur} /><br />
+                                        {formik.touched.name && formik.errors.name && (
+                                            <div className="text-danger">{formik.errors.name}</div>
+                                        )}
                                     </div>
-                                    <div className="col-lg-6">  <h5>ગામ: {selectedData.village}</h5></div>
-                                    <div className="col-lg-6"> <h5> મહેતાજી નંબર: {selectedData.owner}</h5></div>
-                                    <div className="col-lg-6"><h5>દાન તારીખ:- {moment(selectedData.creatted || '').fromNow()}</h5></div>
-                                    <div className="col-lg-6">  <h5>દાન-રકમ: {selectedData.amount}</h5></div>
-                                    <div>
+                                    <div className="col-lg-6">
+                                        <label htmlFor="referencename">હસ્તક નામ:-</label>
+                                        <input type="text"
+                                            id='referencename'
+                                            name='referencename'
+                                            className='form-control'
+                                            value={formik.values.referencename}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur} /><br />
+                                        {formik.touched.referencename && formik.errors.referencename && (
+                                            <div className="text-danger">{formik.errors.referencename}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="village">ગામ:-</label>
+                                        <input type="text"
+                                            id='village'
+                                            name='village'
+                                            className='form-control'
+                                            value={formik.values.village}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur} /><br />
+                                        {formik.touched.village && formik.errors.village && (
+                                            <div className="text-danger">{formik.errors.village}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="taluk">તાલુકો:-</label>
+                                        <input type="text"
+                                            id='taluk'
+                                            name='taluk'
+                                            className='form-control'
+                                            value={formik.values.taluk}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur} /><br />
+                                        {formik.touched.taluk && formik.errors.taluk && (
+                                            <div className="text-danger">{formik.errors.taluk}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="district">જીલ્લો:-</label>
+                                        <input type="text"
+                                            id='district'
+                                            name='district'
+                                            className='form-control'
+                                            value={formik.values.district}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur} /><br />
+                                        {formik.touched.district && formik.errors.district && (
+                                            <div className="text-danger">{formik.errors.district}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                        <input type="text" id='moblie' name='moblie' className='form-control'
+                                            value={formik.values.moblie}
+                                            onChange={(e) => {
+                                                formik.handleChange(e); // This handles changing the moblie field in formik
+                                                handleMobileChange(e); // This triggers your custom logic
+                                            }}
+                                            onBlur={formik.handleBlur}
+                                        /><br />
+                                        {formik.touched.moblie && formik.errors.moblie && (
+                                            <div className="text-danger">{formik.errors.moblie}</div>
+                                        )}
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="amount">દાન-રકમ* :-</label>
+                                        <input type="text" id='amount' name='amount' className='form-control'
+                                            value={formik.values.amount}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                        /><br />
+                                        {formik.touched.amount && formik.errors.amount && (
+                                            <div className="text-danger">{formik.errors.amount}</div>
+                                        )}
+                                    </div>
 
-                                        <button
-                                            disabled={selectedData.modeofpayment !== "હપ્તે દાન"}
+                                    <div className="col-lg-4">
+                                        <label htmlFor="amounts">ચુકવણી પદ્ધતિ* :-</label>
+                                        <div className='row d-flex align-items-center'>
+                                            <div className="form-check">
+                                                <label htmlFor="fullDonation">
+                                                    <input
+                                                        type="radio"
+                                                        id="fullDonation"
+                                                        name="modeofpatment" // Use a unique name for this group
+                                                        value="સંપૂર્ણ  દાન"
+                                                        checked={formik.values.modeofpatment === "સંપૂર્ણ  દાન"} // Match the value attribute
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                    /> સંપૂર્ણ  દાન
+                                                </label>
+                                                <label htmlFor="monthlyDonation">
+                                                    <input
+                                                        type="radio"
+                                                        id="monthlyDonation"
+                                                        name="modeofpatment" // Use a unique name for this group
+                                                        value="હપ્તે દાન"
+                                                        checked={formik.values.modeofpatment === "હપ્તે દાન"} // Match the value attribute
+                                                        onChange={formik.handleChange}
+                                                        onBlur={formik.handleBlur}
+                                                    />   હપ્તે દાન
+                                                </label>
+                                            </div>
 
-                                            className="btn btn-success"
-                                            onClick={handleShowSecondModal}
+                                            {formik.touched.modeofpatment && formik.errors.modeofpatment && (
+                                                <div className="text-danger">{formik.errors.modeofpatment}</div>
+                                            )}
+                                        </div>
+
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <label htmlFor="description">વિગત:-</label>
+                                        <select
+                                            name="description"
+                                            id="description"
+                                            className='form-select'
+                                            value={formik.values.description}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
                                         >
-                                            <FontAwesomeIcon icon={faPlus} />
-                                        </button>
+                                            <option value="">વિગત-દાન</option>
+                                            <option value="બાંધકામ">બાંધકામ</option>
+                                            <option value="ભૂમિદાન">ભૂમિદાન</option>
+                                            <option value="બીજમંત્ર-અનુષ્ઠાન">બીજમંત્ર-અનુષ્ઠાન</option>
+                                            <option value="સંતો રસોઈ">સંતો રસોઈ</option>
+                                            <option value="ઠાકોરજી થાળ">ઠાકોરજી થાળ</option>
+                                            <option value="અન્ય દાન">અન્ય દાન</option>
+                                        </select>
+
+                                        {formik.touched.description && formik.errors.description ? (
+                                            <div className="text-danger">{formik.errors.description}</div>
+                                        ) : null}
+
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+                                <div className=' row' >
+                                    <div className=' d-flex justify-content-center'>
+                                        <button className='btn btn-success mt-3'>Submit</button>
 
-                <Modal
-                    show={showSecondModal}
-                    onHide={handleCloseSecondModal}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header>
-                        <Modal.Title>My Modal</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Formik
-                            initialValues={{
-                                number: '', // Initialize your form field values here
-                                paymentMethod: '',
-                            }}
-                            onSubmit={(values) => {
-                                // Handle form submission here
-                                console.log(values);
-                                setShowSecondModal(false);
-                            }}
-                        >
-                            <Form>
-                                <div>
-                                    <label htmlFor="number">Number:</label>
-                                    <Field type="number" id="number" name="number" />
-                                    <ErrorMessage name="number" component="div" />
+                                    </div>
                                 </div>
+                            </form>
 
-                                <div>
-                                    <label htmlFor="paymentMethod">Payment Method:</label>
-                                    <Field as="select" id="paymentMethod" name="paymentMethod">
-                                        <option value="">કેશ</option>
-                                        <option value="online">ઓનલાઇન/બૈંક</option>
-                                    </Field>
-                                    <ErrorMessage name="paymentMethod" component="div" />
-                                </div>
 
-                                <button type="submit">Submit</button>
-                            </Form>
-                        </Formik>
-                    </Modal.Body>
+                        </div>
+                    </div>
+                    <ToastContainer style={{ zIndex: 99999 }} />
+                </div >
 
-                </Modal>
             </main >
         </div >
     )
 }
+
