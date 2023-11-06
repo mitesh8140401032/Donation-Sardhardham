@@ -1,20 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react'
-import UserSiderbar from './UserSiderbar'
 
-import MUIDataTable from "mui-datatables";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import createCache from '@emotion/cache';
-import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import React, { useEffect, useRef, useState } from 'react';
+import UserSiderbar from './UserSiderbar';
+import ReactApexChart from 'react-apexcharts';
+import MUIDataTable from 'mui-datatables';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
 import Firebase from './Firebase';
 import moment from 'moment';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import Nav from 'react-bootstrap/Nav';
+import CountUp from 'react-countup';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
+import createCache from '@emotion/cache';
 const muiCache = createCache({
     key: 'mui-datatables',
     prepend: true
@@ -29,6 +31,13 @@ export default function DonerParty() {
     const [show, setShow] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
     const [showSecondModal, setShowSecondModal] = useState(false);
+
+    const [description0, setDescription0] = useState('')
+    const [description1, setDescription1] = useState('')
+    const [description2, setDescription2] = useState('')
+    const [description3, setDescription3] = useState('')
+    const [description4, setDescription4] = useState('')
+    const [description5, setDescription5] = useState('')
     const handleClose = () => {
         setShow(false);
         setSelectedData(null);
@@ -116,6 +125,17 @@ export default function DonerParty() {
             options: {
                 filter: true,
                 sort: false,
+                customBodyRender: (value, tableMeta) => {
+                    return (
+                        value === "0" ? "બાંધકામ" :
+                            value === "1" ? "ભૂમિદાન" :
+                                value === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
+                                    value === "3" ? "સંતો રસોઈ" :
+                                        value === "4" ? "ઠાકોરજી થાળ" :
+                                            value === "5" ? "અન્ય દાન" :
+                                                "--"
+                    );
+                }
             }
         },
         {
@@ -146,6 +166,49 @@ export default function DonerParty() {
     const calculateTotalAmount = (data) => {
         const total = data.reduce((total, item) => total + parseInt(item.amount || 0), 0);
         setTotalAmount(total);
+
+        let a0 = 0;
+        let a1 = 0;
+        let a2 = 0;
+        let a3 = 0;
+        let a4 = 0;
+        let a5 = 0;
+        let find0 = alldata.filter((i) => i.description === "0")
+        let find1 = alldata.filter((i) => i.description === "1")
+        let find2 = alldata.filter((i) => i.description === "2")
+        let find3 = alldata.filter((i) => i.description === "3")
+        let find4 = alldata.filter((i) => i.description === "4")
+        let find5 = alldata.filter((i) => i.description === "5")
+
+        find0.forEach(i => {
+            a0 += parseInt(i.amount)
+        });
+
+        find1.forEach(i => {
+            a1 += parseInt(i.amount)
+        });
+
+        find2.forEach(i => {
+            a2 += parseInt(i.amount)
+        });
+
+        find3.forEach(i => {
+            a3 += parseInt(i.amount)
+        });
+
+        find4.forEach(i => {
+            a4 += parseInt(i.amount)
+        });
+
+        find5.forEach(i => {
+            a5 += parseInt(i.amount)
+        });
+        setDescription0(a0)
+        setDescription1(a1)
+        setDescription2(a2)
+        setDescription3(a3)
+        setDescription4(a4)
+        setDescription5(a5)
     }
     const getData = () => {
         let db = Firebase.firestore()
@@ -168,31 +231,86 @@ export default function DonerParty() {
             });
     }
 
-    let a = alldata.filter(i => i.description == 'બાંધકામ')
-    let b = alldata.filter(i => i.description == 'ભૂમિદાન')
-    let c = alldata.filter(i => i.description == 'બીજમંત્ર-અનુષ્ઠાન')
-    let d = alldata.filter(i => i.description == 'બાંધકામ')
+    let a = alldata.filter(i => i.description == '0')
+    let b = alldata.filter(i => i.description == '1')
+    let c = alldata.filter(i => i.description == '2')
+    let d = alldata.filter(i => i.description == '3')
+    let e = alldata.filter(i => i.description == '4')
+    let f = alldata.filter(i => i.description == '5')
+    const series = [parseInt(description0), parseInt(description1), parseInt(description2), parseInt(description3), parseInt(description4), parseInt(description5)];
+    const options2 = {
+        chart: {
+            width: 380,
+            type: "pie",
+
+        },
+        labels: ["બાંધકામ", "ભૂમિદાન", "બીજમંત્ર-અનુષ્ઠાન", "સંતો રસોઈ", "ઠાકોરજી થાળ", "અન્ય દાન"],
+        colors: ['#73BBC9', '#080202', '#73BBC9', "#080202", "#73BBC9", "#080202"],
+        responsive: [
+            {
+                breakpoint: 400,
+                options: {
+                    chart: {
+                        width: 345,
+                        foreColor: '#FFB6D9',
+                        fontFamily: 'Arial, sans-serif'
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            },
+        ],
+    };
 
     const options = {
         filterType: 'checkbox',
     };
+
+
+
     return (<>
 
         <UserSiderbar />
         <div>
             <UserSiderbar />
             <main className={`main containers ${sidebarOpen ? 'main-pd' : ''}`} ref={mainRef}>
+                <div className="row pt-5 d-flex align-items-center">
+                    <div className="col-lg-6 p-5 d-flex  justify-content- center align-items-center">
+                        <div id="chart" className=''>
 
+                            <ReactApexChart
+                                options={options2}
+                                series={series}
+                                type="pie"
+                                width={380}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-lg-6 p-5 d-flex justify-content- center align-items-center">
+                        <div>
+
+                            <h3>બાંધકામ:- <CountUp end={description0} duration={4} /></h3>
+                            <h3>ભૂમિદાન:-  <CountUp end={description1} duration={5} /> </h3>
+                            <h3>બીજમંત્ર-અનુષ્ઠાન:-  <CountUp end={description2} duration={5} /> </h3>
+                            <h3>સંતો રસોઈ:-  <CountUp end={description3} duration={5} /> </h3>
+                            <h3>ઠાકોરજી થાળ:-  <CountUp end={description4} duration={5} /> </h3>
+                            <h3>અન્ય દાન:-  <CountUp end={description5} duration={5} /> </h3>
+                            <h3>Net_Amount:-<CountUp end={totalAmount} duration={5} /> </h3>
+                        </div>
+
+                    </div>
+                </div>
                 <div className=' row d-flex justify-content-end pt-5' >
-                    <h3>Total Amount: {totalAmount}</h3> {/* Display the total amount */}
+
 
                     <Tabs
-                        id="controlled-tab-example"
-                        activeKey={key}
-                        onSelect={(k) => setKey(k)}
+                        defaultActiveKey="1"
+                        id="fill-tab-example"
                         className="mb-3"
+                        fill
                     >
-                        <Tab eventKey="home" title="બાંધકામ">
+                        <Tab eventKey="1" title="બાંધકામ">
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -204,7 +322,7 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="profile" title="ભૂમિદાન">
+                        <Tab eventKey="2" title="ભૂમિદાન">
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -216,12 +334,47 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="contact" title=" બીજમંત્ર-અનુષ્ઠાન" >
+                        <Tab eventKey="3" title=" બીજમંત્ર-અનુષ્ઠાન" >
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
                                         title={"Income"}
                                         data={c}
+                                        columns={columns}
+                                        options={options}
+                                    />
+                                </ThemeProvider>
+                            </CacheProvider>
+                        </Tab>
+                        <Tab eventKey="4" title="સંતો રસોઈ" >
+                            <CacheProvider value={muiCache}>
+                                <ThemeProvider theme={createTheme()}>
+                                    <MUIDataTable
+                                        title={"Income"}
+                                        data={d}
+                                        columns={columns}
+                                        options={options}
+                                    />
+                                </ThemeProvider>
+                            </CacheProvider>
+                        </Tab><Tab eventKey="5" title=" ઠાકોરજી થાળ" >
+                            <CacheProvider value={muiCache}>
+                                <ThemeProvider theme={createTheme()}>
+                                    <MUIDataTable
+                                        title={"Income"}
+                                        data={e}
+                                        columns={columns}
+                                        options={options}
+                                    />
+                                </ThemeProvider>
+                            </CacheProvider>
+                        </Tab>
+                        <Tab eventKey="6" title=" અન્ય દાન" >
+                            <CacheProvider value={muiCache}>
+                                <ThemeProvider theme={createTheme()}>
+                                    <MUIDataTable
+                                        title={"Income"}
+                                        data={f}
                                         columns={columns}
                                         options={options}
                                     />
@@ -244,8 +397,21 @@ export default function DonerParty() {
                                 <div className="row">
                                     <div className="col-lg-6"> <h5>નામ: {selectedData.name}</h5>  </div>
                                     <div className="col-lg-6"> <h5> હસ્તક નામ: {selectedData.referencename}</h5></div>
-                                    <div className="col-lg-6"> <h5>વિગત: {selectedData.description}</h5></div>
-                                    <div className="col-lg-6">  <h5>ચુકવણી પદ્ધતિ: {selectedData.modeofpatment}</h5>
+                                    <div className="col-lg-6"> <h5>વિગત:
+
+
+                                        {
+                                            selectedData.description === "0" ? "બાંધકામ" :
+                                                selectedData.description === "1" ? "ભૂમિદાન" :
+                                                    selectedData.description === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
+                                                        selectedData.description === "3" ? "સંતો રસોઈ" :
+                                                            selectedData.description === "4" ? "ઠાકોરજી થાળ" :
+                                                                selectedData.description === "5" ? "અન્ય દાન" :
+                                                                    "--"
+                                        }
+
+                                    </h5></div>
+                                    <div className="col-lg-6">  <h5>ચુકવણી પદ્ધતિ: {selectedData.modeofpatment == "0" ? "સંપૂર્ણ  દાન" : "  હપ્તે દાન"}</h5>
                                     </div>
                                     <div className="col-lg-6">  <h5>ગામ: {selectedData.village}</h5></div>
                                     <div className="col-lg-6"> <h5> મહેતાજી નંબર: {selectedData.owner}</h5></div>

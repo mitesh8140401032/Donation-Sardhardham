@@ -43,22 +43,6 @@ export default function Dashboard() {
                 sort: true,
             }
         },
-        {
-            name: "referencename",
-            label: "હસ્ત નામ",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
-        {
-            name: "village",
-            label: "ગામ",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
 
         {
             label: "મોબાઈલ નંબર",
@@ -82,16 +66,21 @@ export default function Dashboard() {
             options: {
                 filter: true,
                 sort: false,
+                customBodyRender: (value, tableMeta) => {
+                    return (
+
+                        value === "0" ? "બાંધકામ" :
+                            value === "1" ? "ભૂમિદાન" :
+                                value === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
+                                    value === "3" ? "સંતો રસોઈ" :
+                                        value === "4" ? "ઠાકોરજી થાળ" :
+                                            value === "5" ? "અન્ય દાન" :
+                                                "--"
+                    );
+                }
             }
         },
-        {
-            label: "મહેતાજી નંબર",
-            name: "owner",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
+
 
     ];
 
@@ -104,14 +93,7 @@ export default function Dashboard() {
                 sort: true,
             }
         },
-        {
-            name: "referencename",
-            label: "હસ્ત નામ",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
+
 
 
         {
@@ -138,14 +120,7 @@ export default function Dashboard() {
                 sort: false,
             }
         },
-        {
-            label: "મહેતાજી નંબર",
-            name: "owner",
-            options: {
-                filter: true,
-                sort: false,
-            }
-        },
+
 
     ];
 
@@ -245,6 +220,8 @@ export default function Dashboard() {
             type: "pie",
         },
         labels: ['Income', 'Expenses'],
+        colors: ['#73BBC9', '#080202']
+        ,
         responsive: [
             {
                 breakpoint: 400,
@@ -265,7 +242,7 @@ export default function Dashboard() {
             <main className={`main containers ${sidebarOpen ? 'main-pd' : ''}`} ref={mainRef}>
                 <div className="container">
                     <div className="row pt-5 d-flex align-items-center">
-                        <div className="col-lg-6 d-flex  justify-content- center align-items-center">
+                        <div className="col-lg-6 p-5 d-flex  justify-content- center align-items-center">
                             <div id="chart" className=''>
 
                                 <ReactApexChart
@@ -276,12 +253,12 @@ export default function Dashboard() {
                                 />
                             </div>
                         </div>
-                        <div className="col-lg-6 d-flex justify-content- center align-items-center">
+                        <div className="col-lg-6 p-5 d-flex justify-content- center align-items-center">
                             <div>
 
-                                <h1>Total_Income:-  <CountUp end={income} duration={4} /></h1>
-                                <h1>Total_Expenses:-  <CountUp end={expenses} duration={5} /> </h1>
-                                <h1>Total_Amount:- <CountUp end={income - expenses} duration={6} /></h1>
+                                <h3>Total_Income:-  <CountUp end={income} duration={4} /></h3>
+                                <h3>Total_Expenses:-  <CountUp end={expenses} duration={5} /> </h3>
+                                <h3>Total_Amount:- <CountUp end={income - expenses} duration={6} /></h3>
                             </div>
 
                         </div>

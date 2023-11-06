@@ -20,6 +20,7 @@ export default function RouteContainer() {
 
 
                 <Route path='/' element={<SingIn />} />
+                <Route path='*' element={<SingIn />} />
 
 
 

@@ -254,8 +254,8 @@ export default function Income() {
                                                         type="radio"
                                                         id="fullDonation"
                                                         name="modeofpatment" // Use a unique name for this group
-                                                        value="સંપૂર્ણ  દાન"
-                                                        checked={formik.values.modeofpatment === "સંપૂર્ણ  દાન"} // Match the value attribute
+                                                        value="0"
+                                                        checked={formik.values.modeofpatment === "0"} // Match the value attribute
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                     /> સંપૂર્ણ  દાન
@@ -265,8 +265,8 @@ export default function Income() {
                                                         type="radio"
                                                         id="monthlyDonation"
                                                         name="modeofpatment" // Use a unique name for this group
-                                                        value="હપ્તે દાન"
-                                                        checked={formik.values.modeofpatment === "હપ્તે દાન"} // Match the value attribute
+                                                        value="1"
+                                                        checked={formik.values.modeofpatment === "1"} // Match the value attribute
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
                                                     />   હપ્તે દાન
@@ -290,12 +290,12 @@ export default function Income() {
                                             onBlur={formik.handleBlur}
                                         >
                                             <option value="">વિગત-દાન</option>
-                                            <option value="બાંધકામ">બાંધકામ</option>
-                                            <option value="ભૂમિદાન">ભૂમિદાન</option>
-                                            <option value="બીજમંત્ર-અનુષ્ઠાન">બીજમંત્ર-અનુષ્ઠાન</option>
-                                            <option value="સંતો રસોઈ">સંતો રસોઈ</option>
-                                            <option value="ઠાકોરજી થાળ">ઠાકોરજી થાળ</option>
-                                            <option value="અન્ય દાન">અન્ય દાન</option>
+                                            <option value="0">બાંધકામ</option>
+                                            <option value="1">ભૂમિદાન</option>
+                                            <option value="2">બીજમંત્ર-અનુષ્ઠાન</option>
+                                            <option value="3">સંતો રસોઈ</option>
+                                            <option value="4">ઠાકોરજી થાળ</option>
+                                            <option value="5">અન્ય દાન</option>
                                         </select>
 
                                         {formik.touched.description && formik.errors.description ? (
