@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faFont, faHandHoldingDollar, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import './UserSiderbar.css'
 import { Link, useNavigate } from 'react-router-dom';
+import { Eng, Guj } from './HandleLanuage';
+import { MyContext } from './ContextProvider';
+
 import logo from './Mitesh.png'
 export default function UserSiderbar() {
     const navigate = useNavigate('')
-
+    const { lang, setLang } = useContext(MyContext);
+    const [change, setChange] = useState(lang);
     const toggleRef = useRef(null);
     const sidebarRef = useRef(null);
     const mainRef = useRef(null);
@@ -27,7 +31,12 @@ export default function UserSiderbar() {
         navigate('/')
     }
 
-
+    const handleToggle = () => {
+        const newLang = lang === 'Eng' ? 'Guj' : 'Eng';
+        setChange(newLang);
+        setLang(newLang);
+    };
+    const languageData = lang === 'Eng' ? Eng : Guj;
     useEffect(() => {
 
         let url = window.location.href
@@ -50,6 +59,8 @@ export default function UserSiderbar() {
             linkRefs.current.forEach(l => l.removeEventListener('click', handleLinkClick));
         };
     }, []);
+
+
     return (
         <div className={`wrapper ${sidebarOpen ? 'show-sidebar' : ''}`} style={{ overflow: 'hidden' }}>
 
@@ -59,6 +70,19 @@ export default function UserSiderbar() {
                     <button ref={toggleRef} className=' header__toggle'>
                         <FontAwesomeIcon icon={faBars} className='fs-3' />
                     </button>
+
+                    <div style={{ float: 'right' }}>
+                        <div class="toggle-button-cover">
+                            <div class="button-cover">
+                                <div class="button r" id="button-1">
+                                    <input type="checkbox" className="checkbox" onClick={handleToggle} />
+
+                                    <div class="knobs"></div>
+                                    <div class="layer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -70,24 +94,29 @@ export default function UserSiderbar() {
                         <div className="sidebar__list">
                             <Link to={'/dashboard/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
-                                <span className="sidebar__link-name">Dashboard </span>
-                                <span className="sidebar__link-floating">Dashboard </span>
+                                <span className="sidebar__link-name">{languageData.dashboard} </span>
+
                             </Link>
                             <Link to={'/income/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
 
-                                <span className="sidebar__link-name">Income</span>
+                                <span className="sidebar__link-name">{languageData.income} </span>
+
 
                             </Link>
                             <Link to={'/expenses/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
 
-                                <span className="sidebar__link-name">Expenses </span>
+
+                                <span className="sidebar__link-name">{languageData.expenses} </span>
+
 
                             </Link><Link to={'/doner-party/' + loginId} className="sidebar__link link" >
                                 <img src={logo} alt="!.." width={20} height={20} />
 
-                                <span className="sidebar__link-name">Doner_Party </span>
+
+                                <span className="sidebar__link-name">{languageData.donerparty} </span>
+
 
                             </Link>
 
@@ -98,7 +127,7 @@ export default function UserSiderbar() {
                                 <img src={logo} alt="!.." width={20} height={20} />
 
 
-                                <span className="sidebar__link-name">Logout</span>
+                                <span className="sidebar__link-name">{languageData.logout}</span>
 
                             </span>
                         </div>
