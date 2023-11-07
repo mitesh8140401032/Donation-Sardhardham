@@ -41,7 +41,7 @@ export default function SingIn() {
             // Handle form submission here
 
             login.forEach((i) => {
-                if (i.username === values.username && i.password === values.password) {
+                if (i.username == values.username && i.password == values.password) {
                     naivgate('/dashboard/' + values.username)
                     localStorage.setItem("lid", values.username)
                 }
