@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faFont, faHandHoldingDollar, faHouse, faRightFromBracket, faSignsPost, faSquarePlus, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import './UserSiderbar.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { Eng, Guj } from './HandleLanuage';
@@ -11,9 +11,10 @@ export default function UserSiderbar() {
     const navigate = useNavigate('')
     const { lang, setLang } = useContext(MyContext);
     const [change, setChange] = useState(lang);
+    console.log(change)
     const toggleRef = useRef(null);
     const sidebarRef = useRef(null);
-    const mainRef = useRef(null);
+    // const mainRef = useRef(null);
     const linkRefs = useRef([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [loginId, setLoginId] = useState('')

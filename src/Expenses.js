@@ -1,24 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import UserSiderbar from './UserSiderbar';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Firebase from './Firebase';
 import { useNavigate } from 'react-router-dom';
+import './App.css'
+import { Eng, Guj } from './HandleLanuage';
+import { MyContext } from './ContextProvider';
 
 export default function Expenses() {
+    const { lang, setLang } = useContext(MyContext);
+    const languageData = lang === 'Eng' ? Eng : Guj;
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const Naivgate = useNavigate()
     const [alldata, setAlldata] = useState([])
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required('નામ જરૂરી છે'),
+        name: Yup.string().required(languageData.nameyup),
         referencename: Yup.string(),
-        description: Yup.string().required('વિગત બાકી છે'),
+        description: Yup.string().required(languageData.detailyup),
 
-        modeofpaytment: Yup.string().required('ચુકવણી પદ્ધતિ '),
+        modeofpaytment: Yup.string().required(languageData.modeofpaymentyup),
         moblie: Yup.string()
-            .matches(/^[0-9]{10}$/, 'Please enter a valid 10-digit mobile number')
-            .required('ફોન નંબર બાકી છે'),
+            .matches(/^[0-9]{10}$/, languageData.moblieyup)
+            .required(languageData.moblieyup2),
     });
 
     useEffect(() => {
@@ -123,14 +128,14 @@ export default function Expenses() {
 
                                 <div className="col-lg-4">
 
-                                    <label htmlFor="name">Name:</label>
+                                    <label className='lablel' htmlFor="name">{languageData.name}:</label>
                                     <input type="text" className='form-control' id="name" name="name" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.name} />
                                     {formik.touched.name && formik.errors.name && (
                                         <div className="text-danger">{formik.errors.name}</div>
                                     )}
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="referencename">Reference Name:</label>
+                                    <label className='lablel' htmlFor="referencename">{languageData.referencename}:</label>
                                     <input type="text" id='referencename' name='referencename' className='form-control'
                                         value={formik.values.referencename}
 
@@ -139,7 +144,7 @@ export default function Expenses() {
                                     />
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                    <label className='lablel' htmlFor="moblie">{languageData.moblie}* :-</label>
                                     <input type="text" id='moblie' name='moblie' className='form-control'
                                         value={formik.values.moblie}
                                         onChange={(e) => {
@@ -153,27 +158,27 @@ export default function Expenses() {
                                     )}
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="description">વિગત:</label>
+                                    <label className='lablel' htmlFor="description">{languageData.description}:</label>
                                     <select as="select" id="description" className='form-select' name="description" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.description}>
-                                        <option value="">ખર્ચ</option>
-                                        <option value="પગાર">પગાર</option>
-                                        <option value="ભાડું">ભાડું</option>
-                                        <option value="લાઇટ">લાઇટ-બિલ</option>
-                                        <option value="શાકભાજી">શાકભાજી</option>
-                                        <option value="ડેરી">ડેરી</option>
-                                        <option value="કરિયાણું">કરિયાણું</option>
-                                        <option value="ગેસ બિલ">ગેસ બિલ</option>
-                                        <option value="પેટ્રોલ /ડીઝલ">પેટ્રોલ /ડીઝલ</option>
+                                        <option value="">~~~</option>
+                                        <option value="પગાર">{languageData.salary}</option>
+                                        <option value="ભાડું">{languageData.rent}</option>
+                                        <option value="લાઇટ">{languageData.lightbill}</option>
+                                        <option value="શાકભાજી">{languageData.vegetables}</option>
+                                        <option value="ડેરી">{languageData.dairy}</option>
+                                        <option value="કરિયાણું">{languageData.grocery}</option>
+                                        <option value="ગેસ બિલ">{languageData.gasbill}</option>
+                                        <option value="પેટ્રોલ /ડીઝલ">{languageData.petroldiesel}</option>
                                     </select>
                                     {formik.touched.description && formik.errors.description && (
                                         <div className="text-danger">{formik.errors.description}</div>
                                     )}
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="amounts">ચુકવણી પદ્ધતિ* :-</label>
+                                    <label className='lablel' htmlFor="amounts">{languageData.amounts}* :-</label>
                                     <div className='row d-flex align-items-center'>
                                         <div className="form-check">
-                                            <label htmlFor="fullDonation">
+                                            <label className='lablel' htmlFor="fullDonation">
                                                 <input
                                                     type="radio"
                                                     id="fullDonation"
@@ -182,9 +187,9 @@ export default function Expenses() {
                                                     checked={formik.values.modeofpaytment === "કેશ"} // Match the value attribute
                                                     onChange={formik.handleChange}
                                                     onBlur={formik.handleBlur}
-                                                /> કેશ
+                                                /> {languageData.cash}
                                             </label> <br />
-                                            <label htmlFor="monthlyDonation">
+                                            <label className='lablel' htmlFor="monthlyDonation">
                                                 <input
                                                     type="radio"
                                                     id="monthlyDonation"
@@ -193,7 +198,7 @@ export default function Expenses() {
                                                     checked={formik.values.modeofpaytment === "બઁક"} // Match the value attribute
                                                     onChange={formik.handleChange}
                                                     onBlur={formik.handleBlur}
-                                                />   બઁક
+                                                />   {languageData.bank}
                                             </label>
                                         </div>
                                         {formik.touched.modeofpaytment && formik.errors.modeofpaytment && (
@@ -202,7 +207,7 @@ export default function Expenses() {
                                     </div>
                                 </div>
                                 <div className="col-lg-4">
-                                    <label htmlFor="amount">Amount* :-</label>
+                                    <label className='lablel' htmlFor="amount">{languageData.amount}* :-</label>
                                     <input type="text" id='amount' name='amount' className='form-control'
                                         value={formik.values.amount}
                                         onChange={formik.handleChange}

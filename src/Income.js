@@ -4,9 +4,8 @@ import { Eng, Guj } from './HandleLanuage';
 import { MyContext } from './ContextProvider';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import './App.css'
 import { useFormik } from 'formik';
-import { format } from 'date-fns';
 import Firebase from './Firebase';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -48,19 +47,19 @@ export default function Income() {
             });
     }
     const validationSchema = Yup.object().shape({
-        name: Yup.string().required('નામ જરૂરી છે'),
+        name: Yup.string().required(languageData.nameyup),
         referencename: Yup.string(),
         village: Yup.string().required('ગામ જરૂરી છે'),
         taluk: Yup.string(),
         district: Yup.string(),
-        description: Yup.string().required('Please select an option'),
+        description: Yup.string().required(languageData.detailyup),
         moblie: Yup.string()
 
-            .matches(/^[0-9]{10}$/, 'નંબર અધૂરો છે')
-            .required('ફોન નંબર બાકી છે'),
+            .matches(/^[0-9]{10}$/, languageData.moblieyup)
+            .required(languageData.moblieyup2),
     });
     const currentDate = new Date();
-    const formattedDate = format(currentDate, 'dd-MM-yyyy (hh:mm:ss a)');
+
     let makeid = () => {
         let result = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -157,7 +156,7 @@ export default function Income() {
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="row col-lg-12">
                                     <div className="col-lg-6">
-                                        <label htmlFor="name">{languageData.name}:-</label>
+                                        <label className='lablel' htmlFor="name">{languageData.name}:-</label>
                                         <input type="text"
                                             id='name'
                                             name='name'
@@ -170,7 +169,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-6">
-                                        <label htmlFor="referencename">{languageData.referencename}:-</label>
+                                        <label className='lablel' htmlFor="referencename">{languageData.referencename}:-</label>
                                         <input type="text"
                                             id='referencename'
                                             name='referencename'
@@ -183,7 +182,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="village">{languageData.village}:-</label>
+                                        <label className='lablel' htmlFor="village">{languageData.village}:-</label>
                                         <input type="text"
                                             id='village'
                                             name='village'
@@ -196,7 +195,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="taluk">{languageData.taluk}:-</label>
+                                        <label className='lablel' htmlFor="taluk">{languageData.taluk}:-</label>
                                         <input type="text"
                                             id='taluk'
                                             name='taluk'
@@ -209,7 +208,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="district">{languageData.district}:-</label>
+                                        <label className='lablel' htmlFor="district">{languageData.district}:-</label>
                                         <input type="text"
                                             id='district'
                                             name='district'
@@ -222,7 +221,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="moblie">{languageData.moblie}* :-</label>
+                                        <label className='lablel' htmlFor="moblie">{languageData.moblie}* :-</label>
                                         <input type="text" id='moblie' name='moblie' className='form-control'
                                             value={formik.values.moblie}
                                             onChange={(e) => {
@@ -236,7 +235,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="amount">{languageData.donation_amount}* :-</label>
+                                        <label className='lablel' htmlFor="amount">{languageData.donation_amount}* :-</label>
                                         <input type="text" id='amount' name='amount' className='form-control'
                                             value={formik.values.amount}
                                             onChange={formik.handleChange}
@@ -248,10 +247,10 @@ export default function Income() {
                                     </div>
 
                                     <div className="col-lg-4">
-                                        <label htmlFor="amounts">{languageData.amounts}* :-</label>
+                                        <label className='lablel' htmlFor="amounts">{languageData.amounts}* :-</label>
                                         <div className='row d-flex align-items-center'>
                                             <div className="form-check">
-                                                <label htmlFor="fullDonation">
+                                                <label className='lablel' htmlFor="fullDonation">
                                                     <input
                                                         type="radio"
                                                         id="fullDonation"
@@ -262,7 +261,7 @@ export default function Income() {
                                                         onBlur={formik.handleBlur}
                                                     /> {languageData.modeofpatment1}
                                                 </label>
-                                                <label htmlFor="monthlyDonation">
+                                                <label className='lablel' htmlFor="monthlyDonation">
                                                     <input
                                                         type="radio"
                                                         id="monthlyDonation"
@@ -282,7 +281,7 @@ export default function Income() {
 
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="description">{languageData.description}:-</label>
+                                        <label className='lablel' htmlFor="description">{languageData.description}:-</label>
                                         <select
                                             name="description"
                                             id="description"
@@ -291,7 +290,7 @@ export default function Income() {
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                         >
-                                            <option value=""></option>
+                                            <option value="">~~~</option>
                                             <option value="0">{languageData.construction}</option>
                                             <option value="1">{languageData.landdonation}</option>
                                             <option value="2">{languageData.anushthan}</option>

@@ -557,7 +557,7 @@
 }
 
 #button-1 .checkbox:checked+.knobs:before {
-    content: "G";
+    content: "ગુ";
     left: 42px;
     background-color: #f44336;
 }

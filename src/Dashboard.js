@@ -77,12 +77,12 @@ export default function Dashboard() {
                 customBodyRender: (value, tableMeta) => {
                     return (
 
-                        value === "0" ? "બાંધકામ" :
-                            value === "1" ? "ભૂમિદાન" :
-                                value === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
-                                    value === "3" ? "સંતો રસોઈ" :
-                                        value === "4" ? "ઠાકોરજી થાળ" :
-                                            value === "5" ? "અન્ય દાન" :
+                        value === "0" ? languageData.construction :
+                            value === "1" ? languageData.landdonation :
+                                value === "2" ? languageData.anushthan :
+                                    value === "3" ? languageData.saintscokking :
+                                        value === "4" ? languageData.thakorjithal :
+                                            value === "5" ? languageData.otherdonations  :
                                                 "--"
                     );
                 }

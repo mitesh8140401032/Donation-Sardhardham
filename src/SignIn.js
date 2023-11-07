@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "./Login.css"
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik';
 import Firebase from './Firebase';
 import * as Yup from 'yup';
@@ -41,7 +41,7 @@ export default function SingIn() {
             // Handle form submission here
 
             login.forEach((i) => {
-                if (i.username == values.username && i.password == values.password) {
+                if (i.username === values.username && i.password === values.password) {
                     naivgate('/dashboard/' + values.username)
                     localStorage.setItem("lid", values.username)
                 }

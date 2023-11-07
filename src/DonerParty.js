@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import UserSiderbar from './UserSiderbar';
 import ReactApexChart from 'react-apexcharts';
 import MUIDataTable from 'mui-datatables';
@@ -15,14 +15,16 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import CountUp from 'react-countup';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
+import { Eng, Guj } from './HandleLanuage';
+import { MyContext } from './ContextProvider';
 import createCache from '@emotion/cache';
 const muiCache = createCache({
     key: 'mui-datatables',
     prepend: true
 })
 export default function DonerParty() {
-
+    const { lang, setLang } = useContext(MyContext);
+    const languageData = lang === 'Eng' ? Eng : Guj;
     const [key, setKey] = useState('home');
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -71,16 +73,20 @@ export default function DonerParty() {
             return duration.humanize(true);
         }
     };
-    const handleViewClick = (rowData, rowMeta) => {
-        // rowData will contain the data of the clicked row
-        console.log(rowData);
-        setSelectedData(rowData);
+    const handleViewClick = (rowData) => {
+        for (let i = 0; i < alldata.length; i++) {
+            if (alldata[i].id == rowData) {
+                setSelectedData(alldata[i])
+            }
+        }
+
+
         setShow(true);
     };
     const columns = [
         {
             name: "name",
-            label: "નામ",
+            label: languageData.name,
             options: {
                 filter: true,
                 sort: true,
@@ -88,7 +94,7 @@ export default function DonerParty() {
         },
         {
             name: "referencename",
-            label: "હસ્ત નામ",
+            label: languageData.referencename,
             options: {
                 filter: true,
                 sort: false,
@@ -96,7 +102,7 @@ export default function DonerParty() {
         },
         {
             name: "village",
-            label: "ગામ",
+            label: languageData.village,
             options: {
                 filter: true,
                 sort: false,
@@ -104,7 +110,7 @@ export default function DonerParty() {
         },
 
         {
-            label: "મોબાઈલ નંબર",
+            label: languageData.moblie,
             name: "moblie",
             options: {
                 filter: true,
@@ -112,7 +118,7 @@ export default function DonerParty() {
             }
         },
         {
-            label: "રકમ",
+            label: languageData.amount,
             name: "amount",
             options: {
                 filter: true,
@@ -120,26 +126,26 @@ export default function DonerParty() {
             }
         },
         {
-            label: "વિગત",
+            label: languageData.description,
             name: "description",
             options: {
                 filter: true,
                 sort: false,
                 customBodyRender: (value, tableMeta) => {
                     return (
-                        value === "0" ? "બાંધકામ" :
-                            value === "1" ? "ભૂમિદાન" :
-                                value === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
-                                    value === "3" ? "સંતો રસોઈ" :
-                                        value === "4" ? "ઠાકોરજી થાળ" :
-                                            value === "5" ? "અન્ય દાન" :
+                        value === "0" ? languageData.construction :
+                            value === "1" ? languageData.landdonation :
+                                value === "2" ? languageData.anushthan :
+                                    value === "3" ? languageData.saintscokking :
+                                        value === "4" ? languageData.thakorjithal :
+                                            value === "5" ? languageData.otherdonations :
                                                 "--"
                     );
                 }
             }
         },
         {
-            label: "મહેતાજી નંબર",
+            label: languageData.owner,
             name: "owner",
             options: {
                 filter: true,
@@ -147,16 +153,16 @@ export default function DonerParty() {
             }
         },
         {
-            label: "View",
-            name: "alldata",
+            label: languageData.view,
+            name: "id",
             options: {
                 filter: false,
                 sort: false,
                 customBodyRender: (value, tableMeta) => {
 
                     return (
-                        <button className='btn btn-success' onClick={() => handleViewClick(alldata[tableMeta.rowIndex])}>
-                            View
+                        <button className='btn btn-success' onClick={() => handleViewClick(value)}>
+                            {languageData.view}
                         </button>
                     );
                 },
@@ -244,16 +250,15 @@ export default function DonerParty() {
             type: "pie",
 
         },
-        labels: ["બાંધકામ", "ભૂમિદાન", "બીજમંત્ર-અનુષ્ઠાન", "સંતો રસોઈ", "ઠાકોરજી થાળ", "અન્ય દાન"],
-        colors: ['#73BBC9', '#080202', '#73BBC9', "#080202", "#73BBC9", "#080202"],
+        labels: [languageData.construction, languageData.landdonation, languageData.anushthan, languageData.saintscokking, languageData.thakorjithal, languageData.otherdonations],
+        // colors: ['#73BBC9', '#080202', '#73BBC9', "#080202", "#73BBC9", "#080202"],
         responsive: [
             {
-                breakpoint: 400,
+                breakpoint: 450,
                 options: {
                     chart: {
-                        width: 345,
-                        foreColor: '#FFB6D9',
-                        fontFamily: 'Arial, sans-serif'
+                        width: 350,
+                        type: "pie",
                     },
                     legend: {
                         position: 'bottom',
@@ -276,27 +281,28 @@ export default function DonerParty() {
             <UserSiderbar />
             <main className={`main containers ${sidebarOpen ? 'main-pd' : ''}`} ref={mainRef}>
                 <div className="row pt-5 d-flex align-items-center">
-                    <div className="col-lg-6 p-5 d-flex  justify-content- center align-items-center">
+                    <div className="col-lg-7 mt-4 mb-4 d-flex  justify-content- center align-items-center">
                         <div id="chart" className=''>
 
                             <ReactApexChart
+
                                 options={options2}
                                 series={series}
                                 type="pie"
-                                width={380}
+                                width={480}
                             />
                         </div>
                     </div>
-                    <div className="col-lg-6 p-5 d-flex justify-content- center align-items-center">
+                    <div className="col-lg-5 mt-4 mb-4 d-flex justify-content- center align-items-center">
                         <div>
 
-                            <h3>બાંધકામ:- <CountUp end={description0} duration={4} /></h3>
-                            <h3>ભૂમિદાન:-  <CountUp end={description1} duration={5} /> </h3>
-                            <h3>બીજમંત્ર-અનુષ્ઠાન:-  <CountUp end={description2} duration={5} /> </h3>
-                            <h3>સંતો રસોઈ:-  <CountUp end={description3} duration={5} /> </h3>
-                            <h3>ઠાકોરજી થાળ:-  <CountUp end={description4} duration={5} /> </h3>
-                            <h3>અન્ય દાન:-  <CountUp end={description5} duration={5} /> </h3>
-                            <h3>Net_Amount:-<CountUp end={totalAmount} duration={5} /> </h3>
+                            <h3>{languageData.construction}:- <CountUp end={description0} duration={4} /></h3>
+                            <h3>{languageData.landdonation}:-  <CountUp end={description1} duration={5} /> </h3>
+                            <h3>{languageData.anushthan}:-  <CountUp end={description2} duration={5} /> </h3>
+                            <h3>{languageData.saintscokking}:-  <CountUp end={description3} duration={5} /> </h3>
+                            <h3>{languageData.thakorjithal}:-  <CountUp end={description4} duration={5} /> </h3>
+                            <h3>{languageData.otherdonations}:-  <CountUp end={description5} duration={5} /> </h3>
+                            <h3>{languageData.total}:-<CountUp end={totalAmount} duration={5} /> </h3>
                         </div>
 
                     </div>
@@ -310,7 +316,7 @@ export default function DonerParty() {
                         className="mb-3"
                         fill
                     >
-                        <Tab eventKey="1" title="બાંધકામ">
+                        <Tab eventKey="1" title={languageData.construction}>
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -322,7 +328,7 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="2" title="ભૂમિદાન">
+                        <Tab eventKey="2" title={languageData.landdonation}>
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -334,7 +340,7 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="3" title=" બીજમંત્ર-અનુષ્ઠાન" >
+                        <Tab eventKey="3" title={languageData.anushthan} >
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -346,7 +352,7 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="4" title="સંતો રસોઈ" >
+                        <Tab eventKey="4" title={languageData.saintscokking} >
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -357,7 +363,7 @@ export default function DonerParty() {
                                     />
                                 </ThemeProvider>
                             </CacheProvider>
-                        </Tab><Tab eventKey="5" title=" ઠાકોરજી થાળ" >
+                        </Tab><Tab eventKey="5" title={languageData.thakorjithal} >
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -369,7 +375,7 @@ export default function DonerParty() {
                                 </ThemeProvider>
                             </CacheProvider>
                         </Tab>
-                        <Tab eventKey="6" title=" અન્ય દાન" >
+                        <Tab eventKey="6" title={languageData.otherdonations} >
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
@@ -395,28 +401,28 @@ export default function DonerParty() {
                         {selectedData && (
                             <div>
                                 <div className="row">
-                                    <div className="col-lg-6"> <h5>નામ: {selectedData.name}</h5>  </div>
-                                    <div className="col-lg-6"> <h5> હસ્તક નામ: {selectedData.referencename}</h5></div>
-                                    <div className="col-lg-6"> <h5>વિગત:
+                                    <div className="col-lg-6"> <h5>{languageData.name}: {selectedData.name}</h5>  </div>
+                                    <div className="col-lg-6"> <h5> {languageData.referencename}: {selectedData.referencename}</h5></div>
+                                    <div className="col-lg-6"> <h5>{languageData.description}:
 
 
                                         {
-                                            selectedData.description === "0" ? "બાંધકામ" :
-                                                selectedData.description === "1" ? "ભૂમિદાન" :
-                                                    selectedData.description === "2" ? "બીજમંત્ર-અનુષ્ઠાન" :
-                                                        selectedData.description === "3" ? "સંતો રસોઈ" :
-                                                            selectedData.description === "4" ? "ઠાકોરજી થાળ" :
-                                                                selectedData.description === "5" ? "અન્ય દાન" :
+                                            selectedData.description === "0" ? languageData.construction :
+                                                selectedData.description === "1" ? languageData.landdonation :
+                                                    selectedData.description === "2" ? languageData.anushthan :
+                                                        selectedData.description === "3" ? languageData.saintscokking :
+                                                            selectedData.description === "4" ? languageData.thakorjithal :
+                                                                selectedData.description === "5" ? languageData.otherdonations :
                                                                     "--"
                                         }
 
                                     </h5></div>
-                                    <div className="col-lg-6">  <h5>ચુકવણી પદ્ધતિ: {selectedData.modeofpatment == "0" ? "સંપૂર્ણ  દાન" : "  હપ્તે દાન"}</h5>
+                                    <div className="col-lg-6">  <h5>{languageData.amounts}: {selectedData.modeofpatment == "0" ? languageData.modeofpatment1 : languageData.modeofpatment2}</h5>
                                     </div>
-                                    <div className="col-lg-6">  <h5>ગામ: {selectedData.village}</h5></div>
-                                    <div className="col-lg-6"> <h5> મહેતાજી નંબર: {selectedData.owner}</h5></div>
-                                    <div className="col-lg-6"><h5>દાન તારીખ:- {moment(selectedData.creatted || '').fromNow()}</h5></div>
-                                    <div className="col-lg-6">  <h5>દાન-રકમ: {selectedData.amount}</h5></div>
+                                    <div className="col-lg-6">  <h5>{languageData.village}: {selectedData.village}</h5></div>
+                                    <div className="col-lg-6"> <h5> {languageData.owner}: {selectedData.owner}</h5></div>
+                                    <div className="col-lg-6"><h5>{languageData.dontationdate}:- {moment(selectedData.creatted || '').fromNow()}</h5></div>
+                                    <div className="col-lg-6">  <h5>{languageData.donation_amount}: {selectedData.amount}</h5></div>
                                     <div>
 
                                         <button
