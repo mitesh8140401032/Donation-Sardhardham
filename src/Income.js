@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
-
+import { Eng, Guj } from './HandleLanuage';
+import { MyContext } from './ContextProvider';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,7 +17,8 @@ export default function Income() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const Navigate = useNavigate()
     const [loginId, setLoginId] = useState('')
-
+    const { lang, setLang } = useContext(MyContext);
+    const languageData = lang === 'Eng' ? Eng : Guj;
     useEffect(() => {
         let url = window.location.href
         let Id = url.substring(url.lastIndexOf('/') + 1)
@@ -155,7 +157,7 @@ export default function Income() {
                             <form onSubmit={formik.handleSubmit}>
                                 <div className="row col-lg-12">
                                     <div className="col-lg-6">
-                                        <label htmlFor="name">નામ:-</label>
+                                        <label htmlFor="name">{languageData.name}:-</label>
                                         <input type="text"
                                             id='name'
                                             name='name'
@@ -168,7 +170,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-6">
-                                        <label htmlFor="referencename">હસ્તક નામ:-</label>
+                                        <label htmlFor="referencename">{languageData.referencename}:-</label>
                                         <input type="text"
                                             id='referencename'
                                             name='referencename'
@@ -181,7 +183,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="village">ગામ:-</label>
+                                        <label htmlFor="village">{languageData.village}:-</label>
                                         <input type="text"
                                             id='village'
                                             name='village'
@@ -194,7 +196,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="taluk">તાલુકો:-</label>
+                                        <label htmlFor="taluk">{languageData.taluk}:-</label>
                                         <input type="text"
                                             id='taluk'
                                             name='taluk'
@@ -207,7 +209,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="district">જીલ્લો:-</label>
+                                        <label htmlFor="district">{languageData.district}:-</label>
                                         <input type="text"
                                             id='district'
                                             name='district'
@@ -220,7 +222,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="moblie">મોબાઈલ નંબર* :-</label>
+                                        <label htmlFor="moblie">{languageData.moblie}* :-</label>
                                         <input type="text" id='moblie' name='moblie' className='form-control'
                                             value={formik.values.moblie}
                                             onChange={(e) => {
@@ -234,7 +236,7 @@ export default function Income() {
                                         )}
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="amount">દાન-રકમ* :-</label>
+                                        <label htmlFor="amount">{languageData.donation_amount}* :-</label>
                                         <input type="text" id='amount' name='amount' className='form-control'
                                             value={formik.values.amount}
                                             onChange={formik.handleChange}
@@ -246,7 +248,7 @@ export default function Income() {
                                     </div>
 
                                     <div className="col-lg-4">
-                                        <label htmlFor="amounts">ચુકવણી પદ્ધતિ* :-</label>
+                                        <label htmlFor="amounts">{languageData.amounts}* :-</label>
                                         <div className='row d-flex align-items-center'>
                                             <div className="form-check">
                                                 <label htmlFor="fullDonation">
@@ -258,7 +260,7 @@ export default function Income() {
                                                         checked={formik.values.modeofpatment === "0"} // Match the value attribute
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
-                                                    /> સંપૂર્ણ  દાન
+                                                    /> {languageData.modeofpatment1}
                                                 </label>
                                                 <label htmlFor="monthlyDonation">
                                                     <input
@@ -269,7 +271,7 @@ export default function Income() {
                                                         checked={formik.values.modeofpatment === "1"} // Match the value attribute
                                                         onChange={formik.handleChange}
                                                         onBlur={formik.handleBlur}
-                                                    />   હપ્તે દાન
+                                                    />   {languageData.modeofpatment2}
                                                 </label>
                                             </div>
 
@@ -280,7 +282,7 @@ export default function Income() {
 
                                     </div>
                                     <div className="col-lg-4">
-                                        <label htmlFor="description">વિગત:-</label>
+                                        <label htmlFor="description">{languageData.description}:-</label>
                                         <select
                                             name="description"
                                             id="description"
@@ -289,13 +291,13 @@ export default function Income() {
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}
                                         >
-                                            <option value="">વિગત-દાન</option>
-                                            <option value="0">બાંધકામ</option>
-                                            <option value="1">ભૂમિદાન</option>
-                                            <option value="2">બીજમંત્ર-અનુષ્ઠાન</option>
-                                            <option value="3">સંતો રસોઈ</option>
-                                            <option value="4">ઠાકોરજી થાળ</option>
-                                            <option value="5">અન્ય દાન</option>
+                                            <option value=""></option>
+                                            <option value="0">{languageData.construction}</option>
+                                            <option value="1">{languageData.landdonation}</option>
+                                            <option value="2">{languageData.anushthan}</option>
+                                            <option value="3">{languageData.saintscokking}</option>
+                                            <option value="4">{languageData.thakorjithal}</option>
+                                            <option value="5">{languageData.otherdonations}</option>
                                         </select>
 
                                         {formik.touched.description && formik.errors.description ? (

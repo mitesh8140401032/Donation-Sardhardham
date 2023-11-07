@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import UserSiderbar from './UserSiderbar'
 import ReactApexChart from "react-apexcharts";
 import MUIDataTable from "mui-datatables";
 import CountUp from 'react-countup';
 import 'react-toastify/dist/ReactToastify.css';
 import Firebase from './Firebase';
+import { Eng, Guj } from './HandleLanuage';
+import { MyContext } from './ContextProvider';
 
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { CacheProvider } from '@emotion/react';
@@ -16,6 +18,9 @@ const muiCache = createCache({
 
 
 export default function Dashboard() {
+    const { lang, setLang } = useContext(MyContext);
+    const languageData = lang === 'Eng' ? Eng : Guj;
+    console.log(languageData)
     const [alldata, setAlldata] = useState([])
     const [alldata2, setAlldata2] = useState([])
     const mainRef = useRef(null);
@@ -37,7 +42,7 @@ export default function Dashboard() {
     const columns = [
         {
             name: "name",
-            label: "નામ",
+            label: languageData.name,
             options: {
                 filter: true,
                 sort: true,
@@ -45,24 +50,27 @@ export default function Dashboard() {
         },
 
         {
-            label: "મોબાઈલ નંબર",
             name: "moblie",
+            label: languageData.moblie,
+
             options: {
                 filter: true,
                 sort: false,
             }
         },
         {
-            label: "રકમ",
             name: "amount",
+            label: languageData.amount,
+
             options: {
                 filter: true,
                 sort: false,
             }
         },
         {
-            label: "વિગત",
             name: "description",
+            label: languageData.description,
+
             options: {
                 filter: true,
                 sort: false,
@@ -87,7 +95,8 @@ export default function Dashboard() {
     const columns2 = [
         {
             name: "name",
-            label: "નામ",
+            label: languageData.name,
+
             options: {
                 filter: true,
                 sort: true,
@@ -97,7 +106,8 @@ export default function Dashboard() {
 
 
         {
-            label: "મોબાઈલ નંબર",
+            label: languageData.moblie,
+
             name: "moblie",
             options: {
                 filter: true,
@@ -105,7 +115,8 @@ export default function Dashboard() {
             }
         },
         {
-            label: "રકમ",
+            label: languageData.amount,
+
             name: "amount",
             options: {
                 filter: true,
@@ -113,7 +124,8 @@ export default function Dashboard() {
             }
         },
         {
-            label: "વિગત",
+            label: languageData.description,
+
             name: "description",
             options: {
                 filter: true,
@@ -219,7 +231,7 @@ export default function Dashboard() {
             width: 380,
             type: "pie",
         },
-        labels: ['Income', 'Expenses'],
+        labels: [languageData.income, languageData.expenses],
         colors: ['#73BBC9', '#080202']
         ,
         responsive: [
@@ -256,9 +268,9 @@ export default function Dashboard() {
                         <div className="col-lg-6 p-5 d-flex justify-content- center align-items-center">
                             <div>
 
-                                <h3>Total_Income:-  <CountUp end={income} duration={4} /></h3>
-                                <h3>Total_Expenses:-  <CountUp end={expenses} duration={5} /> </h3>
-                                <h3>Total_Amount:- <CountUp end={income - expenses} duration={6} /></h3>
+                                <h3>{languageData.income}:-  <CountUp end={income} duration={4} /></h3>
+                                <h3>{languageData.expenses}:-  <CountUp end={expenses} duration={5} /> </h3>
+                                <h3>{languageData.total}:- <CountUp end={income - expenses} duration={6} /></h3>
                             </div>
 
                         </div>
@@ -271,7 +283,7 @@ export default function Dashboard() {
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
-                                        title={" Income"}
+                                        title={languageData.income}
                                         data={alldata}
                                         columns={columns}
                                         options={{
@@ -286,7 +298,7 @@ export default function Dashboard() {
                             <CacheProvider value={muiCache}>
                                 <ThemeProvider theme={createTheme()}>
                                     <MUIDataTable
-                                        title={"Expenses"}
+                                        title={languageData.expenses}
                                         data={alldata2}
                                         columns={columns2}
                                         options={{
