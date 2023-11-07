@@ -96,6 +96,7 @@ export default function Income() {
             values.type = "income"
             values.owner = loginId || localStorage.getItem("lid")
             values.creatted = Date.now()
+            values.installment = []
 
             const isAlreadyRegistered = alldata.some((entry) => entry.moblie === values.moblie);
             if (isAlreadyRegistered) {

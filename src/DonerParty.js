@@ -7,7 +7,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
 import Firebase from './Firebase';
 import moment from 'moment';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,6 +40,7 @@ export default function DonerParty() {
     const [description3, setDescription3] = useState('')
     const [description4, setDescription4] = useState('')
     const [description5, setDescription5] = useState('')
+    const [getId, setGetId] = useState('')
     const handleClose = () => {
         setShow(false);
         setSelectedData(null);
@@ -54,7 +55,7 @@ export default function DonerParty() {
 
     useEffect(() => {
         getData();
-
+        UpdateCollection()
     }, []);
 
     useEffect(() => {
@@ -77,6 +78,8 @@ export default function DonerParty() {
         for (let i = 0; i < alldata.length; i++) {
             if (alldata[i].id == rowData) {
                 setSelectedData(alldata[i])
+                setGetId(alldata[i].id)
+
             }
         }
 
@@ -237,6 +240,44 @@ export default function DonerParty() {
             });
     }
 
+    const formik = useFormik({
+        initialValues: {
+            number: '',
+            paymentMethod: '',
+        },
+        onSubmit: (values) => {
+            values.owner = localStorage.getItem("lid");
+            console.log(values);
+            UpdateCollection(values, getId);
+            setShowSecondModal(false);
+        },
+    });
+    const UpdateCollection = (obj, id) => {
+        console.log(obj, id)
+
+        let db = Firebase.firestore()
+
+        db.collection('Doner').where("id", "==", String(id)).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var updateCollection = db.collection("Doner").doc(doc.id);
+                console.log(updateCollection)
+                return updateCollection.update({
+                    installment: obj
+                })
+                    .then(() => {
+
+                        console.log("Document successfully updated!");
+                        getData();
+
+                    })
+                    .catch((error) => {
+                        console.error("Error updating document: ", error);
+                    });
+            });
+        }).catch(err => {
+            console.error(err);
+        });
+    }
     let a = alldata.filter(i => i.description == '0')
     let b = alldata.filter(i => i.description == '1')
     let c = alldata.filter(i => i.description == '2')
@@ -426,7 +467,7 @@ export default function DonerParty() {
                                     <div>
 
                                         <button
-                                            disabled={selectedData.modeofpayment !== "હપ્તે દાન"}
+                                            disabled={selectedData.modeofpayment === "0"}
 
                                             className="btn btn-success"
                                             onClick={handleShowSecondModal}
@@ -434,6 +475,24 @@ export default function DonerParty() {
                                             <FontAwesomeIcon icon={faPlus} />
                                         </button>
                                     </div>
+
+
+                                    <table>
+                                        <tr>
+                                            <th>1</th>
+                                            <th>2</th>
+                                            <th>3</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                {selectedData.installment.number}
+                                            </td>
+                                            <td>{selectedData.installment.paymentMethod}</td>
+                                            <td>{selectedData.installment.owner} </td>
+                                        </tr>
+
+
+                                    </table>
                                 </div>
                             </div>
                         )}
@@ -445,48 +504,41 @@ export default function DonerParty() {
                     </Modal.Footer>
                 </Modal>
 
-                <Modal
-                    show={showSecondModal}
-                    onHide={handleCloseSecondModal}
-                    backdrop="static"
-                    keyboard={false}
-                >
+                <Modal show={showSecondModal} onHide={handleCloseSecondModal} backdrop="static" keyboard={false}>
                     <Modal.Header>
                         <Modal.Title>My Modal</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Formik
-                            initialValues={{
-                                number: '', // Initialize your form field values here
-                                paymentMethod: '',
-                            }}
-                            onSubmit={(values) => {
-                                // Handle form submission here
-                                console.log(values);
-                                setShowSecondModal(false);
-                            }}
-                        >
-                            <Form>
-                                <div>
-                                    <label htmlFor="number">Number:</label>
-                                    <Field type="number" id="number" name="number" />
-                                    <ErrorMessage name="number" component="div" />
-                                </div>
+                        <form onSubmit={formik.handleSubmit}> {/* Step 2 and 3 */}
+                            <div>
+                                <label htmlFor="number">Number:</label>
+                                <input
+                                    type="number"
+                                    id="number"
+                                    name="number"
+                                    onChange={formik.handleChange} // Formik's handleChange function
+                                    value={formik.values.number} // Formik's values
+                                />
+                                <div>{formik.errors.number}</div>
+                            </div>
 
-                                <div>
-                                    <label htmlFor="paymentMethod">Payment Method:</label>
-                                    <Field as="select" id="paymentMethod" name="paymentMethod">
-                                        <option value="">કેશ</option>
-                                        <option value="online">ઓનલાઇન/બૈંક</option>
-                                    </Field>
-                                    <ErrorMessage name="paymentMethod" component="div" />
-                                </div>
+                            <div>
+                                <label htmlFor="paymentMethodas">Payment Method:</label>
+                                <select
+                                    id="paymentMethodas"
+                                    name="paymentMethod"
+                                    onChange={formik.handleChange} // Formik's handleChange function
+                                    value={formik.values.paymentMethod} // Formik's values
+                                >
+                                    <option value="0">કેશ</option>
+                                    <option value="1">ઓનલાઇટ/બેંક</option>
+                                </select>
+                                <div>{formik.errors.paymentMethod}</div>
+                            </div>
 
-                                <button type="submit">Submit</button>
-                            </Form>
-                        </Formik>
+                            <button type="submit">Submit</button>
+                        </form>
                     </Modal.Body>
-
                 </Modal>
             </main >
         </div >

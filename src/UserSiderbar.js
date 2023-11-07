@@ -11,7 +11,7 @@ export default function UserSiderbar() {
     const navigate = useNavigate('')
     const { lang, setLang } = useContext(MyContext);
     const [change, setChange] = useState(lang);
-    console.log(change)
+
     const toggleRef = useRef(null);
     const sidebarRef = useRef(null);
     // const mainRef = useRef(null);
@@ -73,13 +73,13 @@ export default function UserSiderbar() {
                     </button>
 
                     <div style={{ float: 'right' }}>
-                        <div class="toggle-button-cover">
-                            <div class="button-cover">
-                                <div class="button r" id="button-1">
+                        <div className="toggle-button-cover">
+                            <div className="button-cover">
+                                <div className="button r" id="button-1">
                                     <input type="checkbox" className="checkbox" onClick={handleToggle} />
 
-                                    <div class="knobs"></div>
-                                    <div class="layer"></div>
+                                    <div className="knobs"></div>
+                                    <div className="layer"></div>
                                 </div>
                             </div>
                         </div>
