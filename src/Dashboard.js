@@ -19,7 +19,8 @@ const muiCache = createCache({
 
 export default function Dashboard() {
     const { lang, setLang } = useContext(MyContext);
-    const languageData = lang === 'Eng' ? Eng : Guj;
+    const languageData = lang === localStorage.getItem("HandleLanuage") ? Eng : Guj;
+    localStorage.setItem("HandleLanuage", lang)
     console.log(languageData)
     const [alldata, setAlldata] = useState([])
     const [alldata2, setAlldata2] = useState([])
@@ -82,7 +83,7 @@ export default function Dashboard() {
                                 value === "2" ? languageData.anushthan :
                                     value === "3" ? languageData.saintscokking :
                                         value === "4" ? languageData.thakorjithal :
-                                            value === "5" ? languageData.otherdonations  :
+                                            value === "5" ? languageData.otherdonations :
                                                 "--"
                     );
                 }

@@ -11,6 +11,7 @@ import { MyContext } from './ContextProvider';
 export default function Expenses() {
     const { lang, setLang } = useContext(MyContext);
     const languageData = lang === 'Eng' ? Eng : Guj;
+    localStorage.setItem("HandleLanuage", lang)
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const Naivgate = useNavigate()

@@ -18,6 +18,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import { Eng, Guj } from './HandleLanuage';
 import { MyContext } from './ContextProvider';
 import createCache from '@emotion/cache';
+import { tr } from 'date-fns/locale';
 const muiCache = createCache({
     key: 'mui-datatables',
     prepend: true
@@ -25,6 +26,7 @@ const muiCache = createCache({
 export default function DonerParty() {
     const { lang, setLang } = useContext(MyContext);
     const languageData = lang === 'Eng' ? Eng : Guj;
+    
     const [key, setKey] = useState('home');
     const mainRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -62,23 +64,15 @@ export default function DonerParty() {
         // Calculate the total amount whenever the 'alldata' array changes
         calculateTotalAmount(alldata);
     }, [alldata]);
-    const formatTimeAgo = (created) => {
-        const currentDate = moment();
-        const createdDate = moment(created);
-        const duration = moment.duration(currentDate.diff(createdDate));
-        const hoursAgo = duration.asHours();
 
-        if (hoursAgo >= 24) {
-            return createdDate.format('YYYY-MM-DD HH:mm:ss');
-        } else {
-            return duration.humanize(true);
-        }
-    };
+
+
     const handleViewClick = (rowData) => {
+
         for (let i = 0; i < alldata.length; i++) {
-            if (alldata[i].id == rowData) {
-                setSelectedData(alldata[i])
-                setGetId(alldata[i].id)
+            if (alldata[i].id === rowData) {
+                setSelectedData(alldata[i]);
+                setGetId(alldata[i].id);
 
             }
         }
@@ -227,12 +221,12 @@ export default function DonerParty() {
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, " => ", doc.data());
+
 
 
                     data.push(doc.data())
                     setAlldata(data)
-                    console.log(alldata)
+
                 });
             })
             .catch((error) => {
@@ -247,20 +241,20 @@ export default function DonerParty() {
         },
         onSubmit: (values) => {
             values.owner = localStorage.getItem("lid");
-            console.log(values);
+
             UpdateCollection(values, getId);
             setShowSecondModal(false);
         },
     });
     const UpdateCollection = (obj, id) => {
-        console.log(obj, id)
+
 
         let db = Firebase.firestore()
 
         db.collection('Doner').where("id", "==", String(id)).get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 var updateCollection = db.collection("Doner").doc(doc.id);
-                console.log(updateCollection)
+
                 return updateCollection.update({
                     installment: obj
                 })
@@ -464,6 +458,8 @@ export default function DonerParty() {
                                     <div className="col-lg-6"> <h5> {languageData.owner}: {selectedData.owner}</h5></div>
                                     <div className="col-lg-6"><h5>{languageData.dontationdate}:- {moment(selectedData.creatted || '').fromNow()}</h5></div>
                                     <div className="col-lg-6">  <h5>{languageData.donation_amount}: {selectedData.amount}</h5></div>
+
+
                                     <div>
 
                                         <button
@@ -483,13 +479,17 @@ export default function DonerParty() {
                                             <th>2</th>
                                             <th>3</th>
                                         </tr>
-                                        <tr>
-                                            <td>
-                                                {selectedData.installment.number}
-                                            </td>
-                                            <td>{selectedData.installment.paymentMethod}</td>
-                                            <td>{selectedData.installment.owner} </td>
-                                        </tr>
+                                        {selectedData.installment.map((i) => {
+                                            return (
+                                                <tr>
+
+                                                    <td>{i.number}</td>
+                                                    <td>{i.paymentMethod}</td>
+                                                    <td>{i.owner}</td>
+                                                </tr>
+                                            )
+                                        })}
+
 
 
                                     </table>
@@ -504,7 +504,7 @@ export default function DonerParty() {
                     </Modal.Footer>
                 </Modal>
 
-                <Modal show={showSecondModal} onHide={handleCloseSecondModal} backdrop="static" keyboard={false}>
+                <Modal show={showSecondModal} onHide={handleCloseSecondModal} centered  >
                     <Modal.Header>
                         <Modal.Title>My Modal</Modal.Title>
                     </Modal.Header>
